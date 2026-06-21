@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        control_algorithm_base.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 25, 2024 \n 
+ * File:        control_algorithm_base.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 25, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -40,16 +39,10 @@
 #ifndef CONTROL_ALGORITHM_BASE_HPP_
 #define CONTROL_ALGORITHM_BASE_HPP_
 
-/**
- * @file control_algorithm_base.hpp
- * @brief Utilities for Controller Base Definition
- * 
- * Class with fixed members that needs to be utilized with all the functions in each control algorithm.
- */
-
 #include "vehicle_class.hpp"
 #include "flight_params.hpp"
 #include "helper_functions.hpp"
+#include "control_config.hpp"
 
 using namespace _utilities_;
 
@@ -59,10 +52,6 @@ namespace _control_algorithm_base_{
 //                                     CLASS DEFINITION
 /*******************************************************************************************/
 
-/**
- * @class controller_base
- * @brief controller_base definition
- */
 class controller_base
 {
     public:
@@ -73,46 +62,16 @@ class controller_base
         ~controller_base() {}
 
         // Read parameters
-        /**
-         * @brief Read parameters
-         * 
-         * @param jsonFile 
-         */
         void read_params([[maybe_unused]] const std::string& jsonFile) {
             // Default implementation or leave empty if to be overridden
         }
 
         // Initialize initial conditions
-        /**
-         * @brief Initialize initial conditions
-         * @param None
-         */
         void init() {
             // Default implementation or leave empty if to be overridden
         }
 
         // Controller Update state and trajectory
-        /**
-         * @brief Controller Update state and trajectory
-         * 
-         * @param time 
-         * @param x 
-         * @param y 
-         * @param z 
-         * @param vx 
-         * @param vy 
-         * @param vz 
-         * @param q0 
-         * @param q1 
-         * @param q2 
-         * @param q3 
-         * @param roll 
-         * @param pitch 
-         * @param yaw 
-         * @param w_x 
-         * @param w_y 
-         * @param w_z 
-         */
         void update([[maybe_unused]] double time,
                     [[maybe_unused]] double x,
                     [[maybe_unused]] double y,
@@ -134,10 +93,6 @@ class controller_base
         }
 
         // Controller run
-        /**
-         * @brief Controller run
-         * @param time_step_rk4_ 
-         */
         void run([[maybe_unused]] const double time_step_rk4_) {
             // Default implementation or leave empty if to be overridden
         }

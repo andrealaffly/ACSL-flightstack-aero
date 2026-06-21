@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        PID_OMEGA_logger.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        July 25, 2024 \n 
+ * File:        PID_OMEGA_logger.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        July 25, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -48,10 +47,6 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
         _________\//////___\///________\///__\/////////////____\///______________
 */
 
-/**
- * @file PID_OMEGA_logger.hpp
- * @brief Logger for the PID controller
- */
 #ifndef CONTROLLERS_PID_OMEGA_LOGGER_HPP_
 #define CONTROLLERS_PID_OMEGA_LOGGER_HPP_
 
@@ -67,10 +62,6 @@ using namespace _flight_log_;
 namespace _qrbp_{
 namespace _pid_omega_{
 
-/**
- * @class pid_omega_logger
- * @brief PID_OMEGA logger class
- */
 class pid_omega_logger : public blackbox
 {
     public:

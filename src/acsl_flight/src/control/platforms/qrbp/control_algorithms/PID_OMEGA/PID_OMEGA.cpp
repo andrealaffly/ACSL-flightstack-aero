@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        PID_OMEGA.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        July 25, 2024 \n 
+ * File:        PID_OMEGA.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        July 25, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -51,22 +50,10 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
 
 #include "PID_OMEGA.hpp"
 
-/**
- * @file PID_OMEGA.cpp
- * @brief PID  with angular velocities for the QRBP.
- * 
- * Inherts the class controller_base for the basic functionality that is to be used for all control algorithms.
- * 
- * Classes used are referenced in @ref PID_OMEGA.hpp
- */
-
 namespace _qrbp_{
 namespace _pid_omega_{
 
 // Constructor - Take care to initialize the logger
-/**
- * @class pid_omega
- */
 pid_omega::pid_omega(flight_params* p, const std::string & controller_log_dir_) :
            controller_base(p), ud(p), logger(&cim, &csm, &control_input, controller_log_dir_) {
 
@@ -228,53 +215,57 @@ void pid_omega::compute_translational_control_in_I()
 // Compute the orientation commands and the desired total thrust
 void pid_omega::compute_u1_eta_d()
 {
-    // Compute the virtual forces in J
-    cim.mu_tran_J << cim.R_I_J * cim.mu_tran_I;
+	// Compute the virtual forces in J
+	cim.mu_tran_J << cim.R_I_J * cim.mu_tran_I;
 
-    // Compute u1 - Total Thrust
-    cim.u(0) = sqrt(  pow(cim.mu_tran_J(0), 2)
-                    + pow(cim.mu_tran_J(1), 2)
-                    + pow(cim.mu_tran_J(2), 2)
-                    );
+	// Compute u1 - Total Thrust
+	cim.u(0) = sqrt(  pow(cim.mu_tran_J(0), 2)
+							 		+ pow(cim.mu_tran_J(1), 2)
+								 	+ pow(cim.mu_tran_J(2), 2));
 
-    // Compute the desired roll
-    double r1 = cim.mu_tran_J(1) / cim.u(0);
-    cim.eta_rot_d(0) = atan2(r1, sqrt(1 - pow(r1,2)));
+	// Retrieve the desired yaw and yaw rate
+	cim.eta_rot_d(2) = ud.getUserDefinedYaw();
+	cim.eta_rot_rate_d(2) = ud.getUserDefinedYawRate();									
 
-    // Compute the desired pitch
-    cim.eta_rot_d(1) = atan2( -cim.mu_tran_J(0), -cim.mu_tran_J(2) );
+	// Compute the desired roll
+	double r1 = cim.mu_tran_J(1) / cim.u(0);
+	cim.eta_rot_d(0) = atan2(r1, sqrt(1 - pow(r1,2)));
 
-    // Compute the internal state for angular rates
-    cim.internal_state_roll_d_filter << A_filter_roll_ref * csm.state_roll_d_filter
+	// Compute the desired pitch
+	cim.eta_rot_d(1) = atan2( -cim.mu_tran_J(0), -cim.mu_tran_J(2) );
+
+	// Compute the internal state for angular rates
+	cim.internal_state_roll_d_filter << A_filter_roll_ref * csm.state_roll_d_filter
                                       + B_filter_roll_ref * cim.eta_rot_d(0);
 
-    cim.internal_state_pitch_d_filter << A_filter_pitch_ref * csm.state_pitch_d_filter
+	cim.internal_state_pitch_d_filter << A_filter_pitch_ref * csm.state_pitch_d_filter
                                        + B_filter_pitch_ref * cim.eta_rot_d(1);
 
-    // Compute the desired pitch and roll rates
-    cim.eta_rot_rate_d(0) = C_filter_roll_ref * csm.state_roll_d_filter;    
-    cim.eta_rot_rate_d(1) = C_filter_pitch_ref * csm.state_pitch_d_filter;
 
-    // Compute the Jacobian with the current orientation
-    cim.Jacobian = jacobianMatrix(cim.eta_rot(0), cim.eta_rot(1));
+	// Compute the desired roll and pitch rates
+	cim.eta_rot_rate_d(0) = C_filter_roll_ref * csm.state_roll_d_filter;    
+	cim.eta_rot_rate_d(1) = C_filter_pitch_ref * csm.state_pitch_d_filter;	
 
-    // Compute the desired angular velocities
-    cim.omega_rot_d << cim.Jacobian * cim.eta_rot_rate_d;
+	// Compute the Jacobian with the current orientation
+	cim.Jacobian = jacobianMatrix(cim.eta_rot(0), cim.eta_rot(1));
 
-    // Compute the internal state for angular accelration
-    cim.internal_state_omega_x_d_filter << A_filter_roll_dot_ref * csm.state_omega_x_d_filter
-                                         + B_filter_roll_dot_ref * cim.omega_rot_d(0);
+	// Compute the desired angular velocities
+	cim.omega_rot_d << cim.Jacobian * cim.eta_rot_rate_d;
+	
+	// Compute the internal state for angular accelration
+	cim.internal_state_omega_x_d_filter << A_filter_roll_dot_ref * csm.state_omega_x_d_filter
+																				+ B_filter_roll_dot_ref * cim.omega_rot_d(0);
 
-    cim.internal_state_omega_y_d_filter << A_filter_pitch_dot_ref * csm.state_omega_y_d_filter
-                                         + B_filter_pitch_dot_ref * cim.omega_rot_d(1);
+	cim.internal_state_omega_y_d_filter << A_filter_pitch_dot_ref * csm.state_omega_y_d_filter
+																				+ B_filter_pitch_dot_ref * cim.omega_rot_d(1);
 
-    cim.internal_state_omega_z_d_filter << A_filter_yaw_dot_ref * csm.state_omega_z_d_filter
-                                         + B_filter_yaw_dot_ref * cim.omega_rot_d(2);
+	cim.internal_state_omega_z_d_filter << A_filter_yaw_dot_ref * csm.state_omega_z_d_filter
+																				+ B_filter_yaw_dot_ref * cim.omega_rot_d(2);
 
-    // Compute the desired angular acceleration
-    cim.alpha_rot_d(0) = C_filter_roll_dot_ref * csm.state_omega_x_d_filter;
-    cim.alpha_rot_d(1) = C_filter_pitch_dot_ref * csm.state_omega_y_d_filter;
-    cim.alpha_rot_d(2) = C_filter_yaw_dot_ref * csm.state_omega_z_d_filter;
+	// Compute the desired angular acceleration
+	cim.alpha_rot_d(0) = C_filter_roll_dot_ref * csm.state_omega_x_d_filter;
+	cim.alpha_rot_d(1) = C_filter_pitch_dot_ref * csm.state_omega_y_d_filter;
+	cim.alpha_rot_d(2) = C_filter_yaw_dot_ref * csm.state_omega_z_d_filter;	
 }
 
 
@@ -331,7 +322,7 @@ void pid_omega::run(const double time_step_rk4_) {
 
     // Process the dynamics --------------------------------------------------------
     // 1. Compute the aerodynamics 
-    compute_aero_forces_moments(cim.aero.states, cim.aero.coeff, cim.R_J_I, cim.R_W_J);
+    cim.aero.dyn = compute_aero_forces_moments(cim.aero.states, cim.aero.coeff, cim.R_J_I, cim.R_W_J);
     
     // 2. Compute the translational control input
     compute_translational_control_in_I();

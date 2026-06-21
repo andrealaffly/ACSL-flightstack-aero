@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        control_config.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        June 20, 2024 \n 
- * For info:    Andrea L'Afflitto  
+ * File:        global_config.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        June 20, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: Just a header file for configuring which platform and 
@@ -36,13 +35,26 @@
  * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged
  **********************************************************************************************************************/
 
-/**
- * @file control_config.hpp
- * @brief Just a header file for configuring which platform and controller to pick during compilation
- */
+#ifndef GLOBAL_CONFIG_HPP_
+#define GLOBAL_CONFIG_HPP_
 
-#ifndef CONTROL_CONFIG_HPP_
-#define CONTROL_CONFIG_HPP_
+#include <cstdint>   // For uint16_t
+#include <string>    // For const char*
+
+/*********************************************************************************************************************
+  UDP Parameter selection
+**********************************************************************************************************************
+*/
+// IPs for UDP communication
+inline constexpr const char* GROUND_STATION_IP = "127.0.0.1";   // <-- For testing only
+inline constexpr const char* ODROID_M1S_IP = "192.168.12.1";    // <-- For real flights / testing 
+
+// Ports for UDP communication 
+inline constexpr uint16_t MOCAP_PORT = 52000;   // <-- Make sure that this matches the port in your mocap software
+inline constexpr uint16_t WEATHER_PORT = 53000; // <-- Confirm this matches the port in the yaml file in accessories
+
+// BOOLEAN FOR SPOOFING IP ==== TRUE -> GROUND_STATION_IP (testing code) || FALSE -> ODROID_M1S_IP (flights)
+#define TESTING_UDP_COMMUNICATION false
 
 /*********************************************************************************************************************
   PLATFORM selection
@@ -57,18 +69,22 @@
 **********************************************************************************************************************
 */
 // Define named constants for controller types
-#define __PID__ 1
-#define __MRAC_PID__ 2
-#define __PID_OMEGA__ 3
-#define __MRAC_OMEGA__ 4
+#define __PID__           1
+#define __MRAC_PID__      2
+#define __PID_OMEGA__     3
+#define __MRAC_OMEGA__    4
+#define __MRAC_OBSERVER__ 6
 
 // SELECT here the PLATFORM you are using ---------------------------------------------------------------------------
 #define SELECTED_PLATFORM __QRBP__
 
 // SELECT here the CONTROLLER you want to run -----------------------------------------------------------------------
-#define SELECTED_CONTROLLER __PID_OMEGA__
+#define SELECTED_CONTROLLER __MRAC_OMEGA__
 
-
+/*********************************************************************************************************************
+  HELPER BLOCK OF CODE - MODIFY ONLY IF THERE ARE CHANGES TO CONTROLLERS OR UDP NETWORKING
+**********************************************************************************************************************
+*/
 /// ------- INITIALIZING THE CONTROLLER -------- ///
 #if SELECTED_PLATFORM == __QRBP__
 
@@ -83,7 +99,6 @@
         // Remember the class name you used in control_algorithms
         using _picked_controller_ = _qrbp_::_pid_::pid;    
         
-
     #elif  SELECTED_CONTROLLER == __MRAC_PID__ 
 
         #include "MRAC_PID.hpp"
@@ -101,6 +116,11 @@
         #include "MRAC_OMEGA.hpp"
         // Remember the class name you used in control_algorithms
         using _picked_controller_ = _qrbp_::_mrac_omega_::mrac_omega;
+
+    #elif SELECTED_CONTROLLER == __MRAC_OBSERVER__
+        #include "MRAC_OBSERVER.hpp"
+        // Remember the class name you used in control_algorithms
+        using _picked_controller_ = _qrbp_::_mrac_observer_::mrac_observer;
 
     #else 
 
@@ -134,4 +154,15 @@
 #endif
 
 
-#endif  // CONTROL_CONFIG_HPP_
+/// ------- INITIALIZING THE UDP COMMUNICATION -------- ///
+// Block of code that decides if we are testing using the ground station or running the weather capture on the ODroid.
+#if TESTING_UDP_COMMUNICATION
+  // For testing with internal port on groundstation
+  inline constexpr const char* IP_IN_USE = GROUND_STATION_IP;
+#else
+  // For implementation with VICON and ODroid M1s
+  inline constexpr const char* IP_IN_USE = ODROID_M1S_IP;
+#endif
+
+
+#endif  // GLOBAL_CONFIG_HPP_

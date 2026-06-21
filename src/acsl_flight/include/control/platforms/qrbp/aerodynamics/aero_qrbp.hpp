@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        aero_qrbp.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        August 8, 2024 \n 
+ * File:        aero_qrbp.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        August 8, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -48,10 +47,6 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
         _________\//////___\///________\///__\/////////////____\///______________
 */
 
-/**
- * @file aero_qrbp.hpp
- * @brief Aerodynamics class for all algorithms to use with the grbp platform of ACSL
- */
 #ifndef AERO_QRBP_
 #define AERO_QRBP_
 
@@ -60,10 +55,6 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
 namespace _qrbp_{
 
 // Angles for the wings and stabilizers
-/**
- * @struct AeroStates
- * @brief Angles for the wings and stabilizers
- */
 struct AeroStates {
     double v_norm_sq; // Square of the norm of velocity
     double alpha;     // Angle of attack at the center of mass
@@ -75,10 +66,6 @@ struct AeroStates {
 };
 
 // Aerodynamic coefficients for the QRBP
-/**
- * @struct AeroCoeff
- * @brief Aerodynamic coefficients for the QRBP
- */
 struct AeroCoeff {
   // Coefficients for lift of the wings and stabilizers
   double Cl_up;     // Aerodynamic lift coefficient for upper wing
@@ -100,10 +87,6 @@ struct AeroCoeff {
 };
 
 // Structure for all the aerodynamic members of the controller
-/**
- * @struct AeroDynamicMembers
- * @brief Structre for all the aerodynamic members of the controller
- */
 struct AeroDynamicMembers
 {
   Eigen::Matrix<double, 3,1> F_aero;                   // Aerodynamic Forces
@@ -114,17 +97,6 @@ struct AeroDynamicMembers
 
 
 // Inline function to compute the Aerodynamic angles for the NACA-0012 airfoil
-/**
- * @brief Inline function to compute the Aerodynamic angles for the NACA-0012 airfoil
- * 
- * @param u 
- * @param v 
- * @param w 
- * @param w_x 
- * @param w_y 
- * @param w_z 
- * @return AeroStates 
- */
 inline AeroStates computeAeroStatesNACA0012Quad(const double u, const double v, const double w, 
                                                 const double w_x, const double w_y, const double w_z)
 {
@@ -177,12 +149,6 @@ inline AeroStates computeAeroStatesNACA0012Quad(const double u, const double v, 
 }
 
 // Inline function to compute the coefficient of lift for the NACA-0012 airfoil using polynomial approximations
-/**
- * @brief Inline function to compute the coefficient of lift for the NACA-0012 airfoil using polynomial approximations
- * 
- * @param angle 
- * @return double 
- */
 inline double compute_cl(double angle)
 {
     using Eigen::Matrix;
@@ -217,12 +183,6 @@ inline double compute_cl(double angle)
 }
 
 // Inline function to compute the coefficient of drag for the NACA-0012 airfoil using polynomial approximations
-/**
- * @brief Inline function to compute the coefficient of drag for the NACA-0012 airfoil using polynomial approximations
- * 
- * @param angle 
- * @return double 
- */
 inline double compute_cd(double angle)
 {
     using Eigen::Matrix;
@@ -248,12 +208,6 @@ inline double compute_cd(double angle)
 
 // Inline function to compute the coefficient of aerodynamic moment for the NACA-0012 airfoil using polynomial 
 // approximations
-/**
- * @brief Inline function to compute the coefficient of aerodynamic moment for the NACA-0012 airfoil using polynomial approximations
- * 
- * @param angle 
- * @return double 
- */
 inline double compute_cm(double angle)
 {
     using Eigen::Matrix;
@@ -284,12 +238,6 @@ inline double compute_cm(double angle)
 }
 
 // Inline function to compute the aerodynamic coeffiecients for the QRBP
-/**
- * @brief Inline function to compute the aerodynamic coeffiecients for the QRBP
- * 
- * @param states 
- * @return AeroCoeff 
- */
 inline AeroCoeff compute_aero_coefficients(AeroStates states)
 {
   AeroCoeff coeff;
@@ -313,15 +261,6 @@ inline AeroCoeff compute_aero_coefficients(AeroStates states)
 }
 
 // Incine function to comput the aerodynamic and moments for the QRBP
-/**
- * @brief Incine function to comput the aerodynamic and moments for the QRBP
- * 
- * @param states 
- * @param coeff 
- * @param R_J_I 
- * @param R_W_J 
- * @return AeroDynamicMembers 
- */
 inline AeroDynamicMembers compute_aero_forces_moments(AeroStates states, AeroCoeff coeff, Eigen::Matrix3d R_J_I, Eigen::Matrix3d R_W_J)
 {
   AeroDynamicMembers output;

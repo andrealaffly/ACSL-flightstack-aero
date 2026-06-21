@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        control.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 12, 2024 \n 
+ * File:        control.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 12, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -36,12 +35,7 @@
  **********************************************************************************************************************/
 
 #include "control.hpp"
-/**
- * @file control.cpp
- * @brief Control node definition. Runs all the control algorithms. Adds as a hub for all the control actions.
- * 
- * Classes used are referenced in @ref control.hpp
- */
+
 namespace _control_
 {
     /***********************************************************************************************/
@@ -89,9 +83,6 @@ namespace _control_
     /*                                  HELPER FUNCTIONS                                           */
     /***********************************************************************************************/
     /// Funtion that updates the current time when called.
-    /**
-     * @class controlNode
-     */
     void controlNode::updateCurrentTime(){
         // Udpate local time
         time_current_ = this->get_clock()->now().seconds() - timestamp_initial_;
@@ -101,7 +92,6 @@ namespace _control_
 
         // Output the time to the screen
         FLIGHTSTACK_INFO_STREAM_NO_TAG("t:", time_current_, 1000);
-        // std::cout << COLOR_GREEN << "\r" << "TIME: " << time_current_ << "\t" << COLOR_RESET << std::flush;
 
     }
 
@@ -149,7 +139,7 @@ namespace _control_
         px4_msgs::msg::OffboardControlMode msg{};
 
         // -> Package the offboard control mode
-        // -> defines for this are found in control.hpp
+        // -> defines for this are found in px4_defines.hpp
         msg.position = OFFBOARD_POS_CTRL_BOOL;
         msg.velocity = OFFBOARD_VEL_CTRL_BOOL;
         msg.acceleration = OFFBOARD_ACCEL_CTRL_BOOL;
@@ -190,41 +180,11 @@ namespace _control_
         
         // -> publish the message   
         publisher_actuator_motors_->publish(msg);
-
-        // Print the control input - TESTING
-        // std::cout << "t1: " << t1 << ", " 
-        //           << "t2: " << t2 << ", " 
-        //           << "t3: " << t3 << ", " 
-        //           << "t4: " << t4 << std::endl;
-    }
-
-    /// Function to print the vehicle states values to the screen
-    void controlNode::debug2screen()
-    {
-        std::cout << "\n\n";
-        std::cout << "OUTPUT SAVED DATA"   << std::endl;
-        std::cout << "======================="   << std::endl;
-        std::cout << "time:" << vehicle_ptr->get_controltime() << std::endl;
-        std::cout << "x: " << vehicle_ptr->get_x()  << std::endl;
-        std::cout << "y: " << vehicle_ptr->get_y()  << std::endl;
-        std::cout << "z: " << vehicle_ptr->get_z()  << std::endl;
-        std::cout << "q0: " << vehicle_ptr->get_q0()  << std::endl;
-        std::cout << "q1: " << vehicle_ptr->get_q1()  << std::endl;
-        std::cout << "q2: " << vehicle_ptr->get_q2()  << std::endl;
-        std::cout << "q3: " << vehicle_ptr->get_q3()  << std::endl;
-        std::cout << "vx: " << vehicle_ptr->get_vx() << std::endl;
-        std::cout << "vy: " << vehicle_ptr->get_vy() << std::endl;
-        std::cout << "vz: " << vehicle_ptr->get_vy() << std::endl;						
-        std::cout << "rollspeed: " << vehicle_ptr->get_rollspeed() << std::endl;
-        std::cout << "pitchspeed: " << vehicle_ptr->get_pitchspeed() << std::endl;
-        std::cout << "yawspeed: " << vehicle_ptr->get_yawspeed() << std::endl;
-        std::cout << "Euler roll: " << vehicle_ptr->get_roll() << std::endl; 
-        std::cout << "Euler pitch: " << vehicle_ptr->get_pitch() << std::endl;
-        std::cout << "Euler yaw: " << vehicle_ptr->get_yaw() << std::endl;
     }
 
     double controlNode::get_rk4_timestep()
     {
+        // Convert to ms by multiplying with 1e-3
         return flight_params_ptr->controller_rate*0.001;
     }
 
@@ -284,7 +244,7 @@ namespace _control_
                     // Publish least motor spin for quadcopters
                     publish_offboard_control_mode();      
 
-                    if (PUBLISH_ACTUATOR)
+                    if constexpr (_config_param_::PUBLISH_ACTUATOR)
                     {              
                         publish_actuator_motors(get_min_thrust(),
                                                 get_min_thrust(),
@@ -385,7 +345,7 @@ namespace _control_
 
         // Publish the command if you set it to publish
         publish_offboard_control_mode();
-        if (PUBLISH_ACTUATOR)
+        if constexpr (_config_param_::PUBLISH_ACTUATOR)
         {
             publish_actuator_motors(controller_.get_t1(), 
                                     controller_.get_t2(), 

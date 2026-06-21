@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,128 +42,67 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        udp_socket.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 21, 2024 \n 
+ * File:        udp_driver.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 21, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: Class declaration for UDP socket creation using IoContext.
+ * Description: Class definition for UDP driver.
  * 
  * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged
  **********************************************************************************************************************/
 
-#ifndef UDP_SOCKET_HPP_
-#define UDP_SOCKET_HPP_
-
-/**
- * @file udp_socket.hpp
- * @brief Class declaration for UDP socket creation using IoContext.
- */
-
-#include <array>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <utility>
-#include <system_error>
-
-#include "io_context.hpp"
-#include "global_helpers.hpp" // Include for the flightstack global functions
-
-using asio::ip::udp;
-using asio::ip::address;
-using _drivers_::_common_::IoContext;
-
-// Use the namespace _flightstack_ for the global functions
-using namespace _flightstack_;
+#include "udp_driver.hpp"
 
 namespace _drivers_
 {
 namespace _udp_driver_
 {
 
-using Functor = std::function<void (const std::vector<uint8_t> &)>;
-
-/**
- * @class UdpSocket
- * @brief UdpSocket class
- */
-class UdpSocket
+UdpDriver::UdpDriver(const IoContext & ctx)
+: m_ctx(ctx)
 {
-public:
-    UdpSocket(
-        const IoContext & ctx,
-        const std::string & remote_ip, uint16_t remote_port,
-        const std::string & host_ip, uint16_t host_port);
+}
 
-    UdpSocket(
-        const IoContext & ctx,
-        const std::string & ip, uint16_t port);
+void UdpDriver::init_sender(const std::string & ip, uint16_t port)
+{
+  m_sender.reset(new UdpSocket(m_ctx, ip, port));
+}
 
-    ~UdpSocket();
+void UdpDriver::init_sender(
+  const std::string & remote_ip, uint16_t remote_port,
+  const std::string & host_ip, uint16_t host_port)
+{
+  m_sender.reset(new UdpSocket(m_ctx, remote_ip, remote_port, host_ip, host_port));
+}
 
-    UdpSocket(const UdpSocket &) = delete;
-    UdpSocket & operator=(const UdpSocket &) = delete;
+void UdpDriver::init_receiver(const std::string & ip, uint16_t port)
+{
+  try {
+      m_receiver.reset(new UdpSocket(m_ctx, ip, port));
+  } catch (const std::invalid_argument& e) {
+      // Handle the invalid argument exception
+      FLIGHTSTACK_ERROR("Invalid argument when initializing m_receiver:", e.what());
+      // Optionally, perform cleanup or take appropriate action
+  } catch (const std::exception& e) {
+      // Catch any other exceptions
+      FLIGHTSTACK_ERROR("Failed to initialize m_receiver:");
+      // Optionally, perform cleanup or take appropriate action
+  }
+}
 
-    std::string remote_ip() const;
-    uint16_t remote_port() const;
-    std::string host_ip() const;
-    uint16_t host_port() const;
+std::shared_ptr<UdpSocket> UdpDriver::sender() const
+{
+  return m_sender;
+}
 
-    void open();
-    void close();
-    bool isOpen() const;
-    void bind();
+std::shared_ptr<UdpSocket> UdpDriver::receiver() const
+{
+  return m_receiver;
+}
 
-    /*
-    * Blocking Send Operation
-    */
-    std::size_t send(std::vector<uint8_t> & buff);
-
-    /*
-    * Blocking Receive Operation
-    */
-    size_t receive(std::vector<uint8_t> & buff);
-
-    /*
-    * NonBlocking Send Operation
-    */
-    /**
-     * @brief NonBlocing Send Operation
-     */
-    void asyncSend(std::vector<uint8_t> & buff);
-
-    /*
-    * NonBlocking Receive Operation
-    */
-    /**
-     * @brief NonBlocking receive operation
-     * @param func
-     */
-    void asyncReceive(Functor func);
-
-private:
-    void asyncSendHandler(
-        const asio::error_code & error,
-        std::size_t bytes_transferred);
-
-    void asyncReceiveHandler(
-        const asio::error_code & error,
-        std::size_t bytes_transferred);
-
-private:
-    const IoContext & m_ctx;
-    udp::socket m_udp_socket;
-    udp::endpoint m_remote_endpoint;
-    udp::endpoint m_host_endpoint;
-    Functor m_func;
-    static const size_t m_recv_buffer_size{255}; // To match the vicon system
-    std::vector<uint8_t> m_recv_buffer;
-};
-
-}   // namespace _udp_driver
+}   // namespace _udp_driver_
 }   // namespace _drivers_
 
 
-#endif  // UDP_SOCKET_HPP_

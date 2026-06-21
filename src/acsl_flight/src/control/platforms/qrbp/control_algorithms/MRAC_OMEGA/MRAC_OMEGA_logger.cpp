@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        MRAC_OMEGA_logger.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        August 09, 2024 \n 
- * For info:    Andrea L'Afflitto \n 
+ * File:        MRAC_OMEGA_logger.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        August 09, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: logging for the MRAC with angular velocities controller. 
@@ -48,24 +47,12 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
        _______\///\\\\\\__\/\\\______\//\\\_\/\\\\\\\\\\\\\/__\/\\\_____________ 
         _________\//////___\///________\///__\/////////////____\///______________
 */
-/**
- * @file MRAC_OMEGA_logger.cpp
- * @brief logging for the MRAC with angular velocities controller.
- * 
- *              Inherits the Blackbox class for logging and takes in the
- *              internal members for the MRAC_OMEGA.
- * 
- * Classes used are referenced in @ref MRAC_OMEGA_LOGGER.hpp
- */
 
 #include <MRAC_OMEGA_logger.hpp>
 
 namespace _qrbp_{
 namespace _mrac_omega_{
 
-/**
- * @class mrac_omega_logger
- */
 mrac_omega_logger::mrac_omega_logger(controller_internal_members* cim, controller_integrated_state_members* csm, 
                                      Eigen::Vector<float, 8>* control_input, const std::string & controller_log_dir_) : 
                                      CIM(cim), CSM(csm), cntrl_input(control_input), 
@@ -185,6 +172,9 @@ void mrac_omega_logger::logInitHeaders() {
         << "Reference w_x [rad/s], "
         << "Reference w_y [rad/s], "
         << "Reference w_z [rad/s], "
+        << "Reference alpha_x [rad/s^2], "
+        << "Reference alpha_y [rad/s^2], "
+        << "Reference alpha_z [rad/s^2], "
         << "Error in phi [rad], "
         << "Error in theta [rad], "
         << "Error in psi [rad], "
@@ -218,7 +208,23 @@ void mrac_omega_logger::logInitHeaders() {
         << "Normalized Thrust 2 [-], "
         << "Normalized Thrust 3 [-], "
         << "Normalized Thrust 4 [-], "
+        << "dead_zone_value_translational [-], "
+        << "dead_zone_value_rotational [-], "
+        << "proj_op_activated_K_hat_x_translational [-], "
+        << "proj_op_activated_K_hat_r_translational [-], "
+        << "proj_op_activated_Theta_hat_translational [-], "
+        << "proj_op_activated_K_hat_x_rotational [-], "
+        << "proj_op_activated_K_hat_r_rotational [-], "
+        << "proj_op_activated_Theta_hat_rotational [-], "
 		;
+
+        // Use the deader function to create the header for the matrix data
+        generateMatrixHeaders(oss, "K_hat_x_translational", CSM->K_hat_x_tran, "[-]");
+        generateMatrixHeaders(oss, "K_hat_r_translational", CSM->K_hat_r_tran, "[-]");
+        generateMatrixHeaders(oss, "Theta_hat_translational", CSM->Theta_hat_tran, "[-]");
+        generateMatrixHeaders(oss, "K_hat_x_rotational", CSM->K_hat_x_rot, "[-]");
+        generateMatrixHeaders(oss, "K_hat_r_rotational", CSM->K_hat_r_rot, "[-]");
+        generateMatrixHeaders(oss, "Theta_hat_rotational", CSM->Theta_hat_rot, "[-]");
 
 		BOOST_LOG(logger_logdata) << oss.str();
 }
@@ -432,6 +438,9 @@ void mrac_omega_logger::logLogData() {
         << CSM->omega_rot_ref(0) << ", "
         << CSM->omega_rot_ref(1) << ", "
         << CSM->omega_rot_ref(2) << ", "
+        << CIM->omega_rot_ref_dot(0) << ", "
+        << CIM->omega_rot_ref_dot(1) << ", "
+        << CIM->omega_rot_ref_dot(2) << ", "
         << CIM->e_rot_eta(0) << ", "
         << CIM->e_rot_eta(1) << ", "
         << CIM->e_rot_eta(2) << ", "
@@ -465,7 +474,23 @@ void mrac_omega_logger::logLogData() {
         << (*cntrl_input)(1) << ", "
         << (*cntrl_input)(2) << ", "
         << (*cntrl_input)(3) << ", "
+        << CIM->dead_zone_value_translational << ", "
+        << CIM->dead_zone_value_rotational << ", "
+        << CIM->proj_op_activated_K_hat_x_translational << ", "
+        << CIM->proj_op_activated_K_hat_r_translational << ", "
+        << CIM->proj_op_activated_Theta_hat_translational << ", "
+        << CIM->proj_op_activated_K_hat_x_rotational << ", "
+        << CIM->proj_op_activated_K_hat_r_rotational << ", "
+        << CIM->proj_op_activated_Theta_hat_rotational << ", "
         ;
+
+        // Use helper function to output the matrix data
+        appendEigenData(oss, CSM->K_hat_x_tran);
+        appendEigenData(oss, CSM->K_hat_r_tran);
+        appendEigenData(oss, CSM->Theta_hat_tran);
+        appendEigenData(oss, CSM->K_hat_x_rot);
+        appendEigenData(oss, CSM->K_hat_r_rot);
+        appendEigenData(oss, CSM->Theta_hat_rot);
 
     BOOST_LOG(logger_logdata) << oss.str();
 }

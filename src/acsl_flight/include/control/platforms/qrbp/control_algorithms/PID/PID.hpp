@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        PID.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        May 06, 2024 \n 
- * For info:    Andrea L'Afflitto
+ * File:        PID.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        May 06, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: PID for the QRBP. Inherits controller_base class for the
@@ -49,10 +48,7 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
         _________\//////___\///________\///__\/////////////____\///______________
 */
 
-/**
- * @file PID.hpp
- * @brief PID for the QRBP 
- */
+
 #ifndef CONTROLLERS_PID_HPP_
 #define CONTROLLERS_PID_HPP_
 
@@ -71,10 +67,6 @@ using namespace _piecewise_polynomial_trajectory_;
 namespace _qrbp_{
 namespace _pid_{
 
-/**
- * @class pid
- * @brief PID class
- */
 class pid : public controller_base
 {
   public:
@@ -85,11 +77,6 @@ class pid : public controller_base
     ~pid();
 
     // Implementing functions from controller_base
-    /**
-     * @brief Implementing functions from controller_base
-     * 
-     * @param time_step_rk4_ 
-     */
     void run(const double time_step_rk4_);
     void update(double time, 
                 double x,
@@ -139,13 +126,6 @@ class pid : public controller_base
     rk4_array<double, NSI> zeros;
 
     // Define the model
-    /**
-     * @brief Define the model
-     * 
-     * @param y 
-     * @param dy 
-     * @param t 
-     */
     void model(const rk4_array<double, NSI> &y, rk4_array<double, NSI> &dy, double t);
 
     // Create a RungeKutta object.
@@ -162,45 +142,21 @@ class pid : public controller_base
 
   private:
     // Function to compute the translational control in the inertial frame
-    /**
-     * @brief Function to compute the translational control in the inertial frame
-     * @param None
-     */
     void compute_translational_control_in_I();
 
     // Function to compute the thrust (u1) and the desired angles
-    /**
-     * @brief Function to compute the thrust (u1) and the desired angles
-     * @param None
-     */
     void compute_u1_eta_d();
 
     // Function to compute the rotational control input
-    /**
-     * @brief Function to compute the rotational control input
-     * @param None
-     */
     void compute_rotational_control();
 
     // Function to compute the normalized thrust
-    /**
-     * @brief Function to compute the normalized thrust
-     * @param None
-     */
     void compute_normalized_thrusts();
 
     // Assign the values from rk4 to controller internal members
-    /**
-     * @brief Assign the values from rk4 to controller internal members
-     * @param None
-     */
     void assign_from_rk4();
 
     // Function to print to terminal
-    /**
-     * @brief Function to print to terminal
-     * @param None
-     */
     void debug2terminal();
 
 };

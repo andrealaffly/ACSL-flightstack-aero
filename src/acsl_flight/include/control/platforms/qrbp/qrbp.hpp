@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        qrbp.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        May 29, 2024 \n 
+ * File:        qrbp.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        May 29, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -49,24 +48,72 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
         _________\//////___\///________\///__\/////////////____\///______________
 */
 
-/**
- * @file qrbp.hpp
- * @brief Vehicle Information of the QRBP with the NACA 0012 wings and the Velox V2808 kv1300 motors used in all the control algorithms
- */
+/* NOTE: Removed physical mounting functionality for T265 on vehicle. Therefore, those parameters are not provided in 
+         the Mass and inertia properties. Can be added later on if needed with changes to the compile time defines. */
+
 #ifndef QRBP_HPP_
 #define QRBP_HPP_
 
-#include <Eigen/Dense>             // Include the Eigen library
-#include <cmath>
-#include <math.h>
-#include "helper_functions.hpp"  // Include the helper functions for using the rotation matrices
+#include "helper_functions.hpp"     // Include the helper functions for using the rotation matrices
 
-/**
- * @namespace qrbp
- */
+
+/*********************************************************************************************************************
+  PLATFORM component defines
+**********************************************************************************************************************
+*/
+#define ZEDF9P 1  // Set to 0 if ZED-F9P is not attached
+
+
+/*********************************************************************************************************************
+  PLATFORM property defines
+**********************************************************************************************************************
+*/
 namespace _qrbp_{
-        
-    // Constants
+    // ZED-F9P attached -------------------------------------------------------------------- Mass and inertia properties
+    #if ZEDF9P
+    
+    inline constexpr double MASS = 1.68817748;  // mass with ZED-F9P    [Kg]
+
+    // Matrix of inertia of the quadcopter frame - With ZED-F9P attached
+    // [kg*m^2] inertia matrix of the vehicle system expressed in
+    // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
+    const Eigen::Matrix3d inertia_matrix_q = (Eigen::Matrix3d() << 
+                                                 0.02353227, -0.00000011,  0.00047910,
+                                                -0.00000011,  0.01623841, -0.00000128,
+                                                 0.00047910, -0.00000128,  0.02753728).finished();
+
+    // Matrix of inertia of the biplane frame - With ZED-F9P attached
+    // [kg*m^2] inertia matrix of the vehicle system expressed in
+    // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
+    const Eigen::Matrix3d inertia_matrix_b = (Eigen::Matrix3d() << 
+                                                 0.02753728,  0.00000128, -0.00047910,
+                                                 0.00000128,  0.01623841, -0.00000011,
+                                                -0.00047910, -0.00000011,  0.02353227).finished();       
+    
+    #else
+    // ZED-F9P not attached ---------------------------------------------------------------- Mass and inertia properties
+    
+    inline constexpr double MASS = 1.66037326;   // mass without ZED-F9P [Kg]
+
+    // Matrix of inertia of the quadcopter frame - With no T265 and ZED-F9P attached
+    // [kg*m^2] inertia matrix of the vehicle system expressed in
+    // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
+    const Eigen::Matrix3d inertia_matrix_q = (Eigen::Matrix3d() << 
+                                                 0.02322746, -0.00000025,  0.00065038,
+                                                -0.00000025,  0.01583236, -0.00000103,
+                                                 0.00065038, -0.00000103,  0.02741269).finished();
+
+    // Matrix of inertia of the biplane frame - With no T265 and ZED-F9P attached
+    // [kg*m^2] inertia matrix of the vehicle system expressed in
+    // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
+    const Eigen::Matrix3d inertia_matrix_b = (Eigen::Matrix3d() << 
+                                                 0.02741269,  0.00000104, -0.00065038
+                                                 0.00000104,  0.01583236, -0.00000025
+                                                -0.00065038, -0.00000025,  0.02322746).finished();
+
+    #endif
+    
+    // Constants -------------------------------------------------------------------------------------------------------
     inline constexpr double G = 9.81;
     inline constexpr double RHO_HAT = 1.225;
     inline constexpr double PI = 3.1415;
@@ -76,7 +123,6 @@ namespace _qrbp_{
     inline constexpr double SQRT2_OVER_2 = 0.7071067;
 
     // Vehicle and Environment Defines
-    inline constexpr double MASS = 2.04192755;                                    // mass of vehicle                [Kg]                                      
     inline constexpr double LX = 0.097509;                                        // dist to motor along x^J         [m]
     inline constexpr double LY = 0.110688;                                        // dist to motor along y^J         [m]
     inline constexpr double LZ_S = 0.038779;                                      // dist to aero center of stabs    [m]
@@ -91,12 +137,8 @@ namespace _qrbp_{
     inline constexpr double DYN_PRESS_COEFF_W = (0.5 * RHO_HAT * PLANFORM_AREA_W);     
     inline constexpr double DYN_PRESS_COEFF_S = (0.5 * RHO_HAT * PLANFORM_AREA_S);
 
-    // Switch over angle of QRBP
-    inline constexpr double AoS = 70*DEG2RAD;
-
-    // vairbales for switching mechanism
-    inline bool is_biplane;        // Boolean to tell the controller if it is in biplane mode
-    inline bool momentary_button;  // Boolean to tell the controller to reset conditions
+    // Weight vector of the qrbp
+    static inline const Eigen::Vector3d e3_basis = Eigen::Vector3d(0.0, 0.0, 1.0);
 
     // Thrust Normalizeing polynomials are hardcoded!
     // Take care coding this from matlab. check the documentation for the polyval function.
@@ -105,6 +147,28 @@ namespace _qrbp_{
     inline constexpr double MAX_THRUST = 18;                                      // max allowed thrust per motor    [N]
     inline constexpr double MIN_THRUST = 0.3;                                     // min allowed thrust per motor    [N]
 
+    // Switch over angle of QRBP
+    inline constexpr double AoS = 70*DEG2RAD;
+
+    // vairbales for switching mechanism
+    inline bool is_biplane;        // Boolean to tell the controller if it is in biplane mode
+    inline bool momentary_button;  // Boolean to tell the controller to reset conditions
+
+    // Matrix that rotates from quadcopter to biplane mode
+    const Eigen::Matrix3d R_Jq_Jb = (Eigen::Matrix3d() << 
+                                        0.0, 0.0, 1.0,
+                                        0.0, 1.0, 0.0,
+                                       -1.0, 0.0, 0.0).finished();
+
+    // Matrix that rotates from biplane to quadcopter mode
+    const Eigen::Matrix3d R_Jb_Jq = (Eigen::Matrix3d() <<
+                                        0.0, 0.0, -1.0,
+                                        0.0, 1.0,  0.0,
+                                        1.0, 0.0,  0.0).finished();
+
+    // Quaternion that denotes a pitch of 90 degress about an axis and it's inverse
+    const Eigen::Quaterniond PITCH_90 = Eigen::Quaterniond(cos(90*DEG2RAD/2.0), 0.0, sin(90*DEG2RAD/2.0), 0.0);
+    const Eigen::Quaterniond PITCH_90_INV = PITCH_90.inverse();
 
     // Roll Rate Filter ------------------------------------------------------------------------------------------------
     // A matrix of the roll_ref filter
@@ -215,13 +279,10 @@ namespace _qrbp_{
                                                             0.1149654034760465154407782506496,
                                                             0.011001286689392602777259888569006
                                                         ).finished();
-
-    // Weight vector of the qrbp
-    static inline const Eigen::Vector3d e3_basis = Eigen::Vector3d(0.0, 0.0, 1.0);
-
     
-    // Mixer Matrix - This captures the necessary constants within the lambda function and initializes the
-    // mixer_matrix_quadcopter with the resulting matrix.
+    // Mixer Matrix ----------------------------------------------------------------------------------------------------
+    // This captures the necessary constants within the lambda function and initializes the mixer_matrix_quadcopter with 
+    // the resulting matrix.
     // [1/4, -1/(4*l_y),  1/(4*l_x),  1/(4*c_t)]
     // [1/4,  1/(4*l_y), -1/(4*l_x),  1/(4*c_t)]
     // [1/4,  1/(4*l_y),  1/(4*l_x), -1/(4*c_t)]
@@ -253,50 +314,11 @@ namespace _qrbp_{
         return mat; 
     }();
 
-
-
-    // Matrix of inertia of the quadcopter frame
-    // [kg*m^2] inertia matrix of the vehicle system (drone frame + box + propellers) expressed in
-    // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
-    const Eigen::Matrix3d inertia_matrix_q = (Eigen::Matrix3d() << 
-                                                 0.03170556, -0.00000810, 0.00102548,
-                                                -0.00000810,  0.02125186,-0.00000107,
-                                                 0.00102548, -0.00000107, 0.03765785
-                                             ).finished(); 
-
-    // Matrix of inertia of the biplane frame
-    // [kg*m^2] inertia matrix of the vehicle system (drone frame + box + propellers) expressed in
-    // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
-    const Eigen::Matrix3d inertia_matrix_b = (Eigen::Matrix3d() << 
-                                                 0.03676930,  0.00000339, -0.00005560,
-                                                 0.00000339,  0.01964797, -0.00000662,
-                                                -0.00005560, -0.00000662,  0.03093953
-                                             ).finished();      
-
-    // Matrix that rotates from quadcopter to biplane mode
-    const Eigen::Matrix3d R_Jq_Jb = (Eigen::Matrix3d() << 
-                                        0.0, 0.0, 1.0,
-                                        0.0, 1.0, 0.0,
-                                       -1.0, 0.0, 0.0).finished();
-
-    // Matrix that rotates from biplane to quadcopter mode
-    const Eigen::Matrix3d R_Jb_Jq = (Eigen::Matrix3d() <<
-                                        0.0, 0.0, -1.0,
-                                        0.0, 1.0,  0.0,
-                                        1.0, 0.0,  0.0).finished();
-
-    // Quaternion that denotes a pitch of 90 degress about an axis and it's inverse
-    const Eigen::Quaterniond PITCH_90 = Eigen::Quaterniond(cos(90*DEG2RAD/2.0), 0.0, sin(90*DEG2RAD/2.0), 0.0);
-    const Eigen::Quaterniond PITCH_90_INV = PITCH_90.inverse();
+    /********************************************************************************************************************/
+    /*                                         HELPER FUNCTIONS FOR BIPLANE MODE                                        */
+    /********************************************************************************************************************/
 
     // Inline function to compute the switch from Quadcopter mode to Biplane Mode and vice versa
-    /**
-     * @brief Inline function to compute the switch from Quadcopter mode to Biplane Mode and vice versa
-     * 
-     * @param pitch 
-     * @param is_biplane 
-     * @param mnt_btn 
-     */
     inline void QRBPswitchFun(double pitch, bool& is_biplane, bool& mnt_btn)
     {
         // Uncomment based on your requirement
@@ -338,16 +360,6 @@ namespace _qrbp_{
 
     // Inline Function to update the biplane mode states - Goes in the inner loop bridge.
     // Need to modify. This function is written assuming that we are only going in forward flight in a straight line!!!
-    /**
-     * @brief Inline Function to update the biplane mode states - Goes in the inner loop bridge.
-     * 
-     * Need to modify. This function is written assuming that we are only going in forward flight in a straight line!!!
-     * 
-     * @param eta 
-     * @param omega 
-     * @param eta_b 
-     * @param omega_b 
-     */
     inline void update_states_to_biplane_mode(const Vector3d eta,const Vector3d omega, 
                                               Vector3d& eta_b, Vector3d& omega_b) 
     {
@@ -427,14 +439,6 @@ namespace _qrbp_{
     }
 
     // Code written by Giri Mugundan Kumar to switch states - yet to be debugged
-    /**
-     * @brief Code written by Giri Mugundan Kumar to switch states - yet to be debugged
-     * 
-     * @param q_q 
-     * @param omega 
-     * @param eta_b 
-     * @param omega_b 
-     */
     inline void update_states_to_biplane_quaternion_gmk(const Eigen::Quaterniond q_q, const Vector3d omega,
                                                         Vector3d& eta_b, Vector3d& omega_b)
     {
@@ -493,14 +497,6 @@ namespace _qrbp_{
     }
 
     // Code from the PX4 Repository to switch states - might need debugging
-    /**
-     * @brief Code from the PX4 Repository to switch states - might need debugging
-     * 
-     * @param q_q 
-     * @param omega 
-     * @param eta_b 
-     * @param omega_b 
-     */
     inline void update_states_to_biplane_quaternions(const Eigen::Quaterniond q_q, const Vector3d omega, 
                                                      Vector3d& eta_b, Vector3d& omega_b)
     {

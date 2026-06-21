@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        user_defined_trajectory_base.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        June 27, 2024 \n 
+ * File:        user_defined_trajectory_base.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        June 27, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -40,13 +39,6 @@
 #ifndef USER_DEFINED_TRAJECTORY_BASE_HPP_
 #define USER_DEFINED_TRAJECTORY_BASE_HPP_
 
-/**
- * @file user_defined_trajectory_base.hpp
- * @brief User Defined Trajectory Base Definition.
- * 
- * Class with fixed members that needs to be utilized with all the functions in each user defined trajectory.
- */
-
 #include <Eigen/Dense>                   // Include the Eigen library
 #include "helper_functions.hpp"          // Include the helper functions library for the polynomial methods
 
@@ -55,10 +47,6 @@ using namespace _utilities_;
 
 namespace _user_defined_trajectory_base_{
 
-/**
- * @class trajectory_base
- * @brief base trajectory for pixhawk
- */
 class trajectory_base
 {
     public:
@@ -74,45 +62,15 @@ class trajectory_base
                             ud_angular_acc(Vector3d::Zero()){}
 
         // Getter and setter functions for user_defined_position
-        /**
-         * @brief Get the User Defined Position object
-         * @param None
-         * @return const Vector3d& 
-         */
         inline const Vector3d& getUserDefinedPosition() const { return ud_pos; }
-
-        /**
-         * @brief Set the User Defined Position object
-         * @param pos 
-         */
         inline void setUserDefinedPosition(const Vector3d& pos) { ud_pos = pos; }
 
         // Getter and setter functions for user_defined_velocity
-        /**
-         * @brief Get the User Defined Velocity object
-         * @param None
-         * @return const Vector3d& 
-         */
         inline const Vector3d& getUserDefinedVelocity() const { return ud_vel; }
-
-        /**
-         * @brief Set the User Defined Velocity object
-         * @param vel 
-         */
         inline void setUserDefinedVelocity(const Vector3d& vel) { ud_vel = vel; }
 
         // Getter and setter functions for user_defined_acceleration
-        /**
-         * @brief Get the User Defined Acceleration object
-         * @param None
-         * @return const Vector3d& 
-         */
         inline const Vector3d& getUserDefinedAcceleration() const { return ud_acc; }
-
-        /**
-         * @brief Set the User Defined Acceleration object
-         * @param acc 
-         */
         inline void setUserDefinedAcceleration(const Vector3d& acc) { ud_acc = acc; }
 
         // Getter and setter functions for user_defined_angle
@@ -120,54 +78,15 @@ class trajectory_base
         inline void setUserDefinedAngle(const Vector3d& angle) { ud_angle = angle; }
         
         // Setter and getter function for individual angles
-        /**
-         * @brief Set the User Defined Roll object
-         * @param x 
-         */
         inline void setUserDefinedRoll(double x) { ud_angle.x() = x; }
-
-        /**
-         * @brief Set the User Defined Pitch object
-         * @param y 
-         */
         inline void setUserDefinedPitch(double y) { ud_angle.y() = y; }
-
-        /**
-         * @brief Set the User Defined Yaw object
-         * @param z 
-         */
         inline void setUserDefinedYaw(double z) { ud_angle.z() = z; }
-
-        /**
-         * @brief Get the User Defined Roll object
-         * @return double 
-         */
         inline double getUserDefinedRoll() const { return ud_angle.x(); }
-
-        /**
-         * @brief Get the User Defined Pitch object
-         * @return double 
-         */
         inline double getUserDefinedPitch() const { return ud_angle.y(); }
-
-        /**
-         * @brief Get the User Defined Yaw object
-         * @return double 
-         */
         inline double getUserDefinedYaw() const { return ud_angle.z(); }
 
         // Getter and setter functions for user_defined_angular_rate
-        /**
-         * @brief Get the User Defined Angular Rate object
-         * @param None
-         * @return const Vector3d& 
-         */
         inline const Vector3d& getUserDefinedAngularRate() const { return ud_angular_rate; }
-
-        /**
-         * @brief Set the User Defined Angular Rate object
-         * @param angular_rate 
-         */
         inline void setUserDefinedAngularRate(const Vector3d& angular_rate) { ud_angular_rate = angular_rate; }
 
         // Setter and getter function for individual angular rates

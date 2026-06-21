@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        vehicle_class.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 12, 2024 \n 
+ * File:        vehicle_class.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 12, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -38,20 +37,9 @@
 #ifndef VEHICLE_CLASS_HPP_
 #define VEHICLE_CLASS_HPP_
 
-/**
- * @file vehicle_class.hpp
- * @brief Header for the vehicle class object
- * 
- * This stores all the data of the states for any vehicle.
- */
-
 #include <atomic>
 #include <cmath>
 
-/**
- * @class vehicle_states
- * @brief vehicle state class
- */
 class vehicle_states {
 public:
     // Constructor with default values.

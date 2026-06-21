@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,91 +42,52 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        io_context.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 21, 2024 \n 
+ * File:        io_context.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 21, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: Class definition for IoContext to manage thread for udp.
+ * Description: Class declaration for UDP driver.
  * 
  * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged
  **********************************************************************************************************************/
 
-#include "io_context.hpp"
-/**
- * @file io_context.cpp
- * @brief Class definition for IoContext to manage thread for udp
- * 
- * Classes used are referenced in @ref io_context.hpp
- */
+#ifndef UDP_DRIVER_HPP_
+#define UDP_DRIVER_HPP_
+
+#include <iostream>
+#include <memory>
+#include <string>
+
+#include "udp_socket.hpp"
 
 namespace _drivers_
 {
-namespace _common_
+namespace _udp_driver_
 {
 
-// Delegating to the modified constructor with -1 for default CPU
-IoContext::IoContext()
-: IoContext(std::thread::hardware_concurrency(), -1) {}
-
-IoContext::IoContext(size_t threads_count, int cpu)
-: m_ios(new asio::io_service()),
-  m_work(new asio::io_service::work(ios())),
-  m_ios_thread_workers(new _drivers_::_common_::thread_group())
+class UdpDriver
 {
-  for (size_t i = 0; i < threads_count; ++i) {
-    m_ios_thread_workers->create_thread(
-      [this]() {
-        ios().run();
-      });
-  }
+public:
+    explicit UdpDriver(const IoContext & ctx);
 
-  // Pin all threads to the specified CPU if a valid CPU number is provided
-    if (cpu >= 0) {
-        m_ios_thread_workers->pin_all_to_cpu(cpu);
-    }
+    void init_sender(const std::string & ip, uint16_t port);
+    void init_sender(
+        const std::string & remote_ip, uint16_t remote_port,
+        const std::string & host_ip, uint16_t host_port);
+    void init_receiver(const std::string & ip, uint16_t port);
 
-    if (cpu >= 0) {
-        RCLCPP_INFO_STREAM(
-            rclcpp::get_logger("IoContext::IoContext"),
-            "Thread(s) Created: " << serviceThreadCount() << ". Pinned to CPU: " << cpu);
-    } else {
-        RCLCPP_INFO_STREAM(
-            rclcpp::get_logger("IoContext::IoContext"),
-            "Thread(s) Created: " << serviceThreadCount() << ". No CPU pinning.");
-    }
-}
+    std::shared_ptr<UdpSocket> sender() const;
+    std::shared_ptr<UdpSocket> receiver() const;
 
-IoContext::~IoContext()
-{
-  waitForExit();
-}
+private:
+    const IoContext & m_ctx;
+    std::shared_ptr<UdpSocket> m_sender;
+    std::shared_ptr<UdpSocket> m_receiver;
+};
 
-asio::io_service & IoContext::ios() const
-{
-  return *m_ios;
-}
-
-bool IoContext::isServiceStopped()
-{
-  return ios().stopped();
-}
-
-uint32_t IoContext::serviceThreadCount()
-{
-  return m_ios_thread_workers->size();
-}
-
-void IoContext::waitForExit()
-{
-  if (!ios().stopped()) {
-    ios().post([&]() {m_work.reset();});
-  }
-
-  ios().stop();
-  m_ios_thread_workers->join_all();
-}
-
-}   // namespace _common_
+}   // namespace _udp_driver_
 }   // namespace _drivers_
+
+#endif  // UDP_DRIVER_HPP_

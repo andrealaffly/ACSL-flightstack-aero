@@ -1,4 +1,3 @@
- ///@cond
  /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
  * File:        projection_operator.hpp \n 
  * Author:      Mattia Gramuglia        \n 
@@ -34,7 +33,7 @@
  *              For reference: A. L'Afflitto, "Notes on Adaptive Control and Estimation", Springer, Sec. 3.5. or
  *              E. Lavretsky, K. Wise, "Robust and Adaptive Control", Springer 2013, Sec. 11.4
  * 
- * GitHub:    https://github.com/andrealaffly/ACSL-flightstack.git
+ * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged.git
  **********************************************************************************************************************/
 
 /**
@@ -51,14 +50,14 @@
    E. Lavretsky, K. Wise, "Robust and Adaptive Control", Springer 2013, Sec. 11.4
  */
 
-namespace projection_operator
+namespace _projection_operator_
 {
 
-/**
- * Generate the matrix S from its diagonal terms contained in the column vector S_diagonal
- */
+/*
+  Generate the matrix S from its diagonal terms contained in the column vector S_diagonal
+*/
 template<typename Derived>
-auto generateMatrixFromDiagonal(const Eigen::MatrixBase<Derived>& S_diagonal)
+inline auto generateMatrixFromDiagonal(const Eigen::MatrixBase<Derived>& S_diagonal)
   -> Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::RowsAtCompileTime>
 {
   static_assert(Derived::ColsAtCompileTime == 1, "Input must be a column vector");
@@ -71,12 +70,12 @@ auto generateMatrixFromDiagonal(const Eigen::MatrixBase<Derived>& S_diagonal)
   return S;
 }
 
-/**
- * Generate the matrix S from the ellipsoid semi-axis length terms contained in the column vector S_diagonal.
-   If S = diag(1/a^2, 1/b^2, 1/c^2) then the semi-axis lengths are [a, b, c].
- */
+/*
+  Generate the matrix S from the ellipsoid semi-axis length terms contained in the column vector S_diagonal.
+  If S = diag(1/a^2, 1/b^2, 1/c^2) then the semi-axis lengths are [a, b, c].
+*/
 template<typename Derived>
-auto generateEllipsoidMatrixFromDiagonal(const Eigen::MatrixBase<Derived>& S_diagonal)
+inline auto generateEllipsoidMatrixFromDiagonal(const Eigen::MatrixBase<Derived>& S_diagonal)
   -> Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::RowsAtCompileTime>
 {
   static_assert(Derived::ColsAtCompileTime == 1, "Input must be a column vector");
@@ -89,8 +88,8 @@ auto generateEllipsoidMatrixFromDiagonal(const Eigen::MatrixBase<Derived>& S_dia
   return S;
 }
 
-/**  
-* Compute the epsilon parameter from the scaling coefficient alpha
+/* 
+  Compute the epsilon parameter from the scaling coefficient alpha
 */
 inline double computeEpsilonFromAlpha(const double alpha)
 {
@@ -98,12 +97,11 @@ inline double computeEpsilonFromAlpha(const double alpha)
   return epsilon;
 }
 
-/** 
-* @struct ConvexFunctionOutput
-* @brief Struct to hold the output of the convex function
-*  - h_function: convex set function
-*  - dh_dx_jacobian: derivative of h_function with respect to x as a row vector (Jacobian)
-**/
+/*
+  Struct to hold the output of the convex function
+  - h_function: convex set function
+  - dh_dx_jacobian: derivative of h_function with respect to x as a row vector (Jacobian)
+*/
 template <int N>
 struct ConvexFunctionOutput
 {
@@ -111,21 +109,31 @@ struct ConvexFunctionOutput
   Eigen::Matrix<double, 1, N> dh_dx_jacobian;  // Row vector 
 };
 
-namespace ball
+template <int N>
+struct VectorProjectionOutput
+{
+  Eigen::Matrix<double, N, 1> projected_vector; // Holds the projected vector
+  bool projection_operator_activated; // Indicates if the condition that activates the projection operator was met
+};
+
+template <typename Derived1>
+struct MatrixProjectionOutput
+{
+  Eigen::Matrix<typename Derived1::Scalar, Derived1::RowsAtCompileTime, Derived1::ColsAtCompileTime> projected_matrix;
+  bool projection_operator_activated;
+};
+
+namespace _ball_
 {
 
-template <int N>
-/**
- * @brief Convex function to compute h and dh_dx. 
+/* 
+  Convex function to compute h and dh_dx. 
   The inner convex set is a ball of radius sqrt(x_max)
   The outer convex set is a ball of radius sqrt(x_max + epsilon)
- * @param x 
- * @param x_max 
- * @param epsilon 
- * @return ConvexFunctionOutput<N> 
- */
-ConvexFunctionOutput<N> convexFunction(const Eigen::Matrix<double, N, 1>& x,
-                                       const double x_max, const double epsilon)
+*/
+template <int N>
+inline ConvexFunctionOutput<N> convexFunction(const Eigen::Matrix<double, N, 1>& x,
+                                              const double x_max, const double epsilon)
 {
   // Compute h_function = (x'*x - x_max) / epsilon
   double h_function = (x.dot(x) - x_max) / epsilon;
@@ -137,19 +145,14 @@ ConvexFunctionOutput<N> convexFunction(const Eigen::Matrix<double, N, 1>& x,
   return ConvexFunctionOutput<N>{h_function, dh_dx_jacobian};
 }
 
+/* 
+  Function to project the vector x_d based on the _projection_operator_::_ball_::convexFunction()
+  x_d: derivative wrt time of x (RHS of its dynamics equation)
+*/
 template <int N>
-/**
- * @brief   Function to project the vector x_d based on the projection_operator::ball::convexFunction()
-            x_d: derivative wrt time of x (RHS of its dynamics equation)
- * @param x 
- * @param x_d 
- * @param x_max 
- * @param epsilon 
- * @return Eigen::Matrix<double, N, 1> 
- */
-Eigen::Matrix<double, N, 1> projectionVector(const Eigen::Matrix<double, N, 1>& x,
-                                             const Eigen::Matrix<double, N, 1>& x_d,
-                                             const double x_max, const double epsilon)
+inline VectorProjectionOutput<N> projectionVector(const Eigen::Matrix<double, N, 1>& x,
+                                                  const Eigen::Matrix<double, N, 1>& x_d,
+                                                  const double x_max, const double epsilon)
 {
   // Call the convex_function to get h_function and dh_dx_jacobian
   ConvexFunctionOutput<N> cfo = convexFunction<N>(x, x_max, epsilon);
@@ -157,7 +160,9 @@ Eigen::Matrix<double, N, 1> projectionVector(const Eigen::Matrix<double, N, 1>& 
   Eigen::Matrix<double, 1, N> dh_dx_jacobian = cfo.dh_dx_jacobian;
 
   // Check if h_function > 0 and dh_dx_jacobian * x_d > 0
-  if (h_function > 0 && dh_dx_jacobian.dot(x_d) > 0) 
+  bool projection_operator_activated = (h_function > 0 && dh_dx_jacobian.dot(x_d) > 0);
+
+  if (projection_operator_activated) 
   {
     // Precompute the transpose of dh_dx_jacobian
     Eigen::Matrix<double, N, 1> dh_dx_jacobian_transpose = dh_dx_jacobian.transpose();
@@ -167,29 +172,23 @@ Eigen::Matrix<double, N, 1> projectionVector(const Eigen::Matrix<double, N, 1>& 
       x_d - h_function * dh_dx_jacobian_transpose * dh_dx_jacobian * x_d / 
       dh_dx_jacobian.dot(dh_dx_jacobian_transpose);
 
-    return x_d_modified;
+    return {x_d_modified, projection_operator_activated};
   }
   else 
   {
     // If the conditions are not met, return x_d unchanged
-    return x_d;
+    return {x_d, projection_operator_activated};
   }
 }
 
+/*
+  Function to apply projectionVector to a matrix by reshaping it into a vector.
+*/ 
 template <typename Derived1, typename Derived2>
-/**
- * @brief Function to apply projectionVector to a matrix by reshaping it into a vector
- * 
- * @param matrix 
- * @param matrix_d 
- * @param x_max 
- * @param epsilon 
- * @return Eigen::Matrix<typename Derived1::Scalar, Derived1::RowsAtCompileTime, Derived1::ColsAtCompileTime> 
- */
-auto projectionMatrix(const Eigen::MatrixBase<Derived1>& matrix,
-                      const Eigen::MatrixBase<Derived2>& matrix_d,
-                      const double x_max, const double epsilon)
-    -> Eigen::Matrix<typename Derived1::Scalar, Derived1::RowsAtCompileTime, Derived1::ColsAtCompileTime>
+inline MatrixProjectionOutput<Derived1> projectionMatrix(
+  const Eigen::MatrixBase<Derived1>& matrix,
+  const Eigen::MatrixBase<Derived2>& matrix_d,
+  const double x_max, const double epsilon)
 {
   // Use Eigen::internal::traits to get uniform access to row/col dimensions
   // Two template types are used because the first input is a Eigen::Map while the
@@ -212,36 +211,30 @@ auto projectionMatrix(const Eigen::MatrixBase<Derived1>& matrix,
     reshaped_matrix_d(matrix_d.derived().data());
 
   // Apply the projectionVector on the reshaped vector
-  Eigen::Matrix<double, TotalElements, 1> projected_vector = 
+  VectorProjectionOutput<TotalElements> vector_projection_output = 
     projectionVector<TotalElements>(reshaped_matrix, reshaped_matrix_d, x_max, epsilon);
 
   // Reshape the projected vector back into a matrix of the same size
-  Eigen::Map<Eigen::Matrix<double, Rows1, Cols1>> projected_matrix(projected_vector.data());
+  Eigen::Map<Eigen::Matrix<double, Rows1, Cols1>> projected_matrix(vector_projection_output.projected_vector.data());
 
-  return projected_matrix;
+  return {projected_matrix, vector_projection_output.projection_operator_activated};
 }
-} // namespace ball
+} // namespace _ball_
 
-namespace ellipsoid
+namespace _ellipsoid_
 {
 
-template <int N>
-/**
- * @brief   Convex function to compute h and dh_dx. 
+/* 
+  Convex function to compute h and dh_dx. 
   The outer convex set is an ellipsoid centered in x_e with semi-axis length described by the diagonal elements
-  that populate the S matrix. If S = diag(1/a^2, 1/b^2, 1/c^2) then the semi-axis lengths are [a, b, c].
+    that populate the S matrix. If S = diag(1/a^2, 1/b^2, 1/c^2) then the semi-axis lengths are [a, b, c].
   The inner convex set is the outer convex set ellipsoid scaled by the coefficient alpha = 1/sqrt(1 + epsilon).
- * 
- * @param x 
- * @param x_e 
- * @param S 
- * @param epsilon 
- * @return ConvexFunctionOutput<N> 
- */
-ConvexFunctionOutput<N> convexFunction(const Eigen::Matrix<double, N, 1>& x,
-                                       const Eigen::Matrix<double, N, 1>& x_e,
-                                       const Eigen::Matrix<double, N, N>& S,
-                                       const double epsilon)
+*/
+template <int N>
+inline ConvexFunctionOutput<N> convexFunction(const Eigen::Matrix<double, N, 1>& x,
+                                              const Eigen::Matrix<double, N, 1>& x_e,
+                                              const Eigen::Matrix<double, N, N>& S,
+                                              const double epsilon)
 {
   // Compute the difference vector (x - x_e)
   Eigen::Matrix<double, N, 1> x_diff = x - x_e;
@@ -259,23 +252,16 @@ ConvexFunctionOutput<N> convexFunction(const Eigen::Matrix<double, N, 1>& x,
   return ConvexFunctionOutput<N>{h_function, dh_dx_jacobian};
 }
 
-template <int N>
-/**
- * @brief   Function to project the vector x_d based on the projection_operator::ellipsoid::convexFunction()
+/* 
+  Function to project the vector x_d based on the _projection_operator_::_ellipsoid_::convexFunction()
   x_d: derivative wrt time of x (RHS of its dynamics equation)
- * 
- * @param x 
- * @param x_d 
- * @param x_e 
- * @param S 
- * @param epsilon 
- * @return Eigen::Matrix<double, N, 1> 
- */
-Eigen::Matrix<double, N, 1> projectionVector(const Eigen::Matrix<double, N, 1>& x,
-                                             const Eigen::Matrix<double, N, 1>& x_d,
-                                             const Eigen::Matrix<double, N, 1>& x_e,
-                                             const Eigen::Matrix<double, N, N>& S,
-                                             const double epsilon)
+*/
+template <int N>
+inline VectorProjectionOutput<N> projectionVector(const Eigen::Matrix<double, N, 1>& x,
+                                                  const Eigen::Matrix<double, N, 1>& x_d,
+                                                  const Eigen::Matrix<double, N, 1>& x_e,
+                                                  const Eigen::Matrix<double, N, N>& S,
+                                                  const double epsilon)
 {
   // Call the convex_function to get h_function and dh_dx_jacobian
   ConvexFunctionOutput<N> cfo = convexFunction<N>(x, x_e, S, epsilon);
@@ -283,7 +269,9 @@ Eigen::Matrix<double, N, 1> projectionVector(const Eigen::Matrix<double, N, 1>& 
   Eigen::Matrix<double, 1, N> dh_dx_jacobian = cfo.dh_dx_jacobian;
 
   // Check if h_function > 0 and dh_dx_jacobian * x_d > 0
-  if (h_function > 0 && dh_dx_jacobian.dot(x_d) > 0) 
+  bool projection_operator_activated = (h_function > 0 && dh_dx_jacobian.dot(x_d) > 0);
+
+  if (projection_operator_activated) 
   {
     // Precompute the transpose of dh_dx_jacobian
     Eigen::Matrix<double, N, 1> dh_dx_jacobian_transpose = dh_dx_jacobian.transpose();
@@ -293,34 +281,27 @@ Eigen::Matrix<double, N, 1> projectionVector(const Eigen::Matrix<double, N, 1>& 
       x_d - h_function * dh_dx_jacobian_transpose * dh_dx_jacobian * x_d / 
       dh_dx_jacobian.dot(dh_dx_jacobian_transpose);
 
-    return x_d_modified;
+    return {x_d_modified, projection_operator_activated};
   }
   else 
   {
     // If the conditions are not met, return x_d unchanged
-    return x_d;
+    return {x_d, projection_operator_activated};
   }
 }
 
+/*
+  Function to apply projectionVector to a matrix by reshaping it into a vector.
+*/ 
 template <typename Derived1, typename Derived2>
-/**
- * @brief Function to apply projectionVector to a matrix by reshaping it into a vector.
- * 
- * @param matrix 
- * @param matrix_d 
- * @param x_e 
- * @param S 
- * @param epsilon 
- * @return Eigen::Matrix<typename Derived1::Scalar, Derived1::RowsAtCompileTime, Derived1::ColsAtCompileTime> 
- */
-auto projectionMatrix(const Eigen::MatrixBase<Derived1>& matrix,
-                      const Eigen::MatrixBase<Derived2>& matrix_d,
-                      const Eigen::Matrix<double, Derived1::RowsAtCompileTime * Derived1::ColsAtCompileTime, 1>& x_e,
-                      const Eigen::Matrix<double,
-                                          Derived1::RowsAtCompileTime * Derived1::ColsAtCompileTime,
-                                          Derived1::RowsAtCompileTime * Derived1::ColsAtCompileTime>& S,
-                      const double epsilon)
-    -> Eigen::Matrix<typename Derived1::Scalar, Derived1::RowsAtCompileTime, Derived1::ColsAtCompileTime>
+inline MatrixProjectionOutput<Derived1> projectionMatrix(
+  const Eigen::MatrixBase<Derived1>& matrix,
+  const Eigen::MatrixBase<Derived2>& matrix_d,
+  const Eigen::Matrix<double, Derived1::RowsAtCompileTime * Derived1::ColsAtCompileTime, 1>& x_e,
+  const Eigen::Matrix<double,
+                      Derived1::RowsAtCompileTime * Derived1::ColsAtCompileTime,
+                      Derived1::RowsAtCompileTime * Derived1::ColsAtCompileTime>& S,
+  const double epsilon)
 {
   // Use Eigen::internal::traits to get uniform access to row/col dimensions
   // Two template types are used because the first input is a Eigen::Map while the
@@ -343,16 +324,16 @@ auto projectionMatrix(const Eigen::MatrixBase<Derived1>& matrix,
     reshaped_matrix_d(matrix_d.derived().data());
 
   // Apply the projectionVector on the reshaped vector
-  Eigen::Matrix<double, TotalElements, 1> projected_vector = 
+  VectorProjectionOutput<TotalElements> vector_projection_output = 
     projectionVector<TotalElements>(reshaped_matrix, reshaped_matrix_d, x_e, S, epsilon);
 
   // Reshape the projected vector back into a matrix of the same size
-  Eigen::Map<Eigen::Matrix<double, Rows1, Cols1>> projected_matrix(projected_vector.data());
+  Eigen::Map<Eigen::Matrix<double, Rows1, Cols1>> projected_matrix(vector_projection_output.projected_vector.data());
 
-  return projected_matrix;
+  return {projected_matrix, vector_projection_output.projection_operator_activated};
 }
-} // namespace ellipsoid
+} // namespace _ellipsoid_
 
-} // namespace projection_operator
+} // namespace _projection_operator_
 
 #endif // PROJECTION_OPERATOR_HPP

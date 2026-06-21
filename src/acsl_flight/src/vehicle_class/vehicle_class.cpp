@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        vehicle_class.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 12, 2024 \n 
- * For info:    Andrea L'Afflitto
+ * File:        vehicle_class.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 12, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: Getter and setter functions for the vehicle class object.
@@ -36,13 +35,6 @@
  **********************************************************************************************************************/
 
 #include "vehicle_class.hpp"
-/**
- * @file vehicle_class.cpp
- * @brief Getter and setter functions for the vehicle class object.
- * 
- * Classes used are referenced in @ref vehicle_class.hpp
- */
-
 
 // Getter and setter functions for Pixhawk timestamp
 uint64_t vehicle_states::get_pixhawktime() const { return pixtime.load(std::memory_order_acquire); }

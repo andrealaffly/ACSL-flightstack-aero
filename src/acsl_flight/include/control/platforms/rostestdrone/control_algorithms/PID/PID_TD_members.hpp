@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        PID_TD_members.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        July 10, 2024 \n 
+ * File:        PID_TD_members.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        July 10, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -45,10 +44,7 @@
 
 #ifndef CONTROLLERS_PID_TD_MEMBERS_HPP_
 #define CONTROLLERS_PID_TD_MEMBERS_HPP_
-/**
- * @file PID_TD_members.hpp
- * @brief PID controller class members.
- */
+
 #include "Eigen/Dense"
 #include <chrono>
 #include "rostestdrone.hpp"           // Header file for vehicle specific information and some other functions
@@ -58,10 +54,6 @@ namespace _rostestdrone_{
 namespace _pid_{
 
 // Structure for all parameter members of the controller
-/**
- * @class controller_internal_parameters
- * @brief Structure for all parameter members of the controller
- */
 struct controller_internal_parameters
 {
   // Proportional Gains for translational
@@ -86,10 +78,6 @@ struct controller_internal_parameters
 
 
 // Structure for the members that are mapped to the rk4 vector after integration
-/**
- * @brief Structure for the members that are mapped to the rk4 vector after integration
- * @struct controller_integrated_state_members
- */
 struct controller_integrated_state_members
 {
   // Translational Integral error
@@ -107,11 +95,7 @@ struct controller_integrated_state_members
 
 };
 
-// Structure for the internal members of the class
-/**
- * @class controller_internal_members
- * @brief Structure for the internal members of the class
- */
+// Structure for the internal members of the controller
 struct controller_internal_members
 {
   // Time

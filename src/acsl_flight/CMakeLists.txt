@@ -32,6 +32,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(acsl_flight)
 
+# Set CMake build type to release
+set(CMAKE_BUILD_TYPE Release)
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -61,17 +64,20 @@ include_directories(${Boost_INCLUDE_DIRS}
                     ${realsense_INCLUDE_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/json/include/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/eigen/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/config/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/flightstack_helpers/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/flight_log/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/lyapunov_solver/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/adaptive_laws/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/adaptive_laws/operators/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/control_algorithm_base/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/user_defined_trajectory_base/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/mocap/io_context/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/mocap/udp_driver/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/mocap/udp_socket/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/udp_driver/io_context/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/udp_driver/udp_driver
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/udp_driver/udp_socket/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/mocap/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/vio/    
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/vio/  
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/WeatherAPP/  
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/flight_main/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/flight_bridge/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/read_pix/
@@ -85,17 +91,19 @@ include_directories(${Boost_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/MRAC_PID/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/PID_OMEGA/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/MRAC_OMEGA/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/MRAC_OBSERVER/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/rostestdrone/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/rostestdrone/control_algorithms/PID/)
 
 # add source files
 set(SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/utils/lyapunov_solver/continuous_lyapunov_equation.cpp
-  src/mocap/io_context/io_context.cpp
-  src/mocap/udp_driver/udp_driver.cpp
-  src/mocap/udp_socket/udp_socket.cpp
+  src/udp_driver/io_context/io_context.cpp
+  src/udp_driver/udp_driver/udp_driver.cpp
+  src/udp_driver/udp_socket/udp_socket.cpp
   src/mocap/mocap.cpp
   src/vio/vio.cpp
+  src/WeatherAPP/weatherapp.cpp
   src/flight_main/flight_main.cpp
   src/flight_bridge/flight_bridge.cpp
   src/read_pix/read_pix.cpp
@@ -109,6 +117,8 @@ set(SOURCES
   src/control/platforms/qrbp/control_algorithms/PID_OMEGA/PID_OMEGA_logger.cpp
   src/control/platforms/qrbp/control_algorithms/MRAC_OMEGA/MRAC_OMEGA.cpp
   src/control/platforms/qrbp/control_algorithms/MRAC_OMEGA/MRAC_OMEGA_logger.cpp
+  src/control/platforms/qrbp/control_algorithms/MRAC_OBSERVER/MRAC_OBSERVER.cpp
+  src/control/platforms/qrbp/control_algorithms/MRAC_OBSERVER/MRAC_OBSERVER_logger.cpp
   src/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID.cpp
   src/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID_logger.cpp
   src/control/platforms/rostestdrone/control_algorithms/PID/PID_TD.cpp

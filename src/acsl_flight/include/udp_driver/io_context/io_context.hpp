@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,74 +42,106 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        io_context.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 21, 2024 \n 
+ * File:        io_context.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 21, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: Class declaration for UDP driver.
+ * Description: Class declaration for IoContext to manage thread for udp.
  * 
  * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged
  **********************************************************************************************************************/
 
-#ifndef UDP_DRIVER_HPP_
-#define UDP_DRIVER_HPP_
+#ifndef IO_CONTEXT_HPP_
+#define IO_CONTEXT_HPP_
 
-/**
- * @file udp_driver.hpp
- * @brief Class decleration for UDP driver.
- */
-
-#include <iostream>
 #include <memory>
-#include <string>
+#include <vector>
+#include <utility>
+#include <asio.hpp>
+#include <iostream>
 
-#include "udp_socket.hpp"
+#include "rclcpp/logging.hpp"
 
 namespace _drivers_
 {
-namespace _udp_driver_
+namespace _common_
 {
 
-/**
- * @class UdpDriver
- * @brief UdpDriver class
- */
-class UdpDriver
+///! A workaround of boost::thread_group
+// Copied from https://gist.github.com/coin-au-carre/ceb8a790cec3b3535b015be3ec2a1ce2
+struct thread_group
 {
-public:
-    explicit UdpDriver(const IoContext & ctx);
+  std::vector<std::thread> tg;
 
-    /**
-     * @brief Initialize sender
-     * @param ip 
-     * @param port 
-     */
-    void init_sender(const std::string & ip, uint16_t port);
+  thread_group()                                  = default;
+  thread_group(const thread_group &)               = delete;
+  thread_group & operator=(const thread_group &)    = delete;
+  thread_group(thread_group &&)                   = delete;
 
-    /**
-     * @brief Initialize sender using string
-     * @param remote_ip 
-     * @param remote_port 
-     * @param host_ip 
-     * @param host_port 
-     */
-    void init_sender(
-        const std::string & remote_ip, uint16_t remote_port,
-        const std::string & host_ip, uint16_t host_port);
-    void init_receiver(const std::string & ip, uint16_t port);
+  template<class ... Args>
+  void create_thread(Args && ... args) {tg.emplace_back(std::forward<Args>(args)...);}
 
-    std::shared_ptr<UdpSocket> sender() const;
-    std::shared_ptr<UdpSocket> receiver() const;
+  void add_thread(std::thread && t) {tg.emplace_back(std::move(t));}
 
-private:
-    const IoContext & m_ctx;
-    std::shared_ptr<UdpSocket> m_sender;
-    std::shared_ptr<UdpSocket> m_receiver;
+  std::size_t size() const {return tg.size();}
+
+  void join_all()
+  {
+    for (auto & thread : tg) {
+      if (thread.joinable()) {
+        thread.join();
+      }
+    }
+  }
+
+  void pin_all_to_cpu(int cpu)
+    {
+        cpu_set_t cpuset;
+        CPU_ZERO(&cpuset);
+        CPU_SET(cpu, &cpuset);
+
+        for (auto & thread : tg) {
+            pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
+        }
+    }
+
 };
 
-}   // namespace _udp_driver_
+class IoContext
+{
+public:
+  IoContext();
+  explicit IoContext(size_t threads_count, int cpu);
+  ~IoContext();
+
+  IoContext(const IoContext &) = delete;
+  IoContext & operator=(const IoContext &) = delete;
+
+  asio::io_service & ios() const;
+
+  bool isServiceStopped();
+  uint32_t serviceThreadCount();
+
+  void waitForExit();
+
+  template<class F>
+  void post(F f)
+  {
+    ios().post(f);
+  }
+
+private:
+  std::shared_ptr<asio::io_service> m_ios;
+  std::shared_ptr<asio::io_service::work> m_work;
+  std::shared_ptr<_drivers_::_common_::thread_group> m_ios_thread_workers;
+};
+
+}   // namespace _common_
 }   // namespace _drivers_
 
-#endif  // UDP_DRIVER_HPP_
+
+
+
+#endif  // IO_CONTEXT_HPP_

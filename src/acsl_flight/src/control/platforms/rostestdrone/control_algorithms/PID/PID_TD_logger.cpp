@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        PID_TD_logger.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        July 10, 2024 \n 
+ * File:        PID_TD_logger.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        July 10, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -45,14 +44,7 @@
 */
 
 #include <PID_TD_logger.hpp>
-/**
- * @file PID_TD_logger.cpp
- * @brief logging for the PID controller.
- * 
- * Inherits the Blackbox class for logging and takes in the internal members for the PID.
- * 
- * Classes used are referenced in @ref PID_TD_logger.cpp
- */
+
 namespace _rostestdrone_{
 namespace _pid_{
 

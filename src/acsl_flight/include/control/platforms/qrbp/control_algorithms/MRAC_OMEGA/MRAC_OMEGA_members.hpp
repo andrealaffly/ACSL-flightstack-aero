@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        MRAC_OMEGA_members.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        August 07, 2024 \n 
+ * File:        MRAC_OMEGA_members.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        August 07, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -47,10 +46,6 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
         _________\//////___\///________\///__\/////////////____\///______________
 */
 
-/**
- * @file MRAC_OMEGA_members.hpp
- * @brief MRAC with angular velocities controller class members
- */
 #ifndef CONTROLLERS_MRAC_OMEGA_MEMBERS_HPP_
 #define CONTROLLERS_MRAC_OMEGA_MEMBERS_HPP_
 
@@ -64,10 +59,6 @@ namespace _qrbp_{
 namespace _mrac_omega_{
 
 // Structure for all parameter members of the controller
-/**
- * @struct controller_internal_paramters
- * @brief Structure for all parameter members of the controller
- */
 struct controller_internal_paramters
 {
 
@@ -129,14 +120,43 @@ struct controller_internal_paramters
     // Rotational reference model parameters
     Matrix<double, 3, 3> A_ref_rot;
     Matrix<double, 3, 3> B_ref_rot;
-    
+
+    // Robustification parameters ----------------------------------------------------------------------------------------
+    // Deadzone operator
+    double dead_zone_delta_translational;
+    double dead_zone_e0_translational;
+    double dead_zone_delta_rotational;
+    double dead_zone_e0_rotational;
+
+    // E-modification 
+    double sigma_x_translational;
+    double sigma_r_translational;
+    double sigma_Theta_translational;
+    double sigma_x_rotational;
+    double sigma_r_rotational;
+    double sigma_Theta_rotational;
+
+    // Ellipsoid projection operator
+    double projection_x_max_x_translational; 
+    double projection_epsilon_x_translational;
+
+    double projection_x_max_r_translational;
+    double projection_epsilon_r_translational;
+
+    double projection_x_max_Theta_translational;
+    double projection_epsilon_Theta_translational;
+
+    double projection_x_max_x_rotational; 
+    double projection_epsilon_x_rotational;
+
+    double projection_x_max_r_rotational;
+    double projection_epsilon_r_rotational;
+
+    double projection_x_max_Theta_rotational;
+    double projection_epsilon_Theta_rotational;    
 };
 
 // Structure for all the aerodynamic members of the controller
-/**
- * @struct controller_internal_members_aero
- * @brief Structure for all the aerodynamic members of the controller
- */
 struct controller_internal_members_aero
 {
     AeroStates states;
@@ -145,10 +165,6 @@ struct controller_internal_members_aero
 };
 
 // Structure for the members that are mapped to the rk4 vector after integration
-/**
- * @struct controller_integrated_state_members
- * @brief Structure for the members that are mapped to the rk4 vector after integration
- */
 struct controller_integrated_state_members
 {
     // States for filter
@@ -180,11 +196,11 @@ struct controller_integrated_state_members
     // Integral error between the angular velocity reference model and the desired angular velocity
 	Matrix<double, 3, 1> e_rot_omega_ref_I;
 
-    // Angular Velocity Reference model
-    Matrix<double, 3, 1> omega_rot_ref;
-
     // Integral error in orientation
     Matrix<double, 3, 1> e_rot_eta_I;
+
+    // Angular Velocity Reference model
+    Matrix<double, 3, 1> omega_rot_ref;
 
     // Rotational Adaptive gains for x
     Matrix<double, 3, 3> K_hat_x_rot;
@@ -198,10 +214,6 @@ struct controller_integrated_state_members
 };
 
 // Structure for the internal members of the controller
-/**
- * @struct controller_internal_members
- * @brief Structure for the internal members of the controller
- */
 struct controller_internal_members
 {
     // Time
@@ -346,6 +358,19 @@ struct controller_internal_members
 
     // Thrust after Saturation
     Matrix<double, 4,1> Sat_Thrust;
+
+    // Deadzone operator values
+    double dead_zone_value_translational;
+    double dead_zone_value_rotational;
+
+    // Projection activation values
+    bool proj_op_activated_K_hat_x_translational;
+    bool proj_op_activated_K_hat_r_translational;
+    bool proj_op_activated_Theta_hat_translational;
+
+    bool proj_op_activated_K_hat_x_rotational;
+    bool proj_op_activated_K_hat_r_rotational;
+    bool proj_op_activated_Theta_hat_rotational;
 };
 
 } // namespace _mrac_omega

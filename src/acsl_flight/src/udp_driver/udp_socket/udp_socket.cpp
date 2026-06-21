@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,9 +42,9 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        udp_socket.cpp \n
- * Author:      Giri Mugundan Kumar \n
- * Date:        April 21, 2024 \n
+ * File:        udp_socket.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 21, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -55,12 +54,7 @@
  **********************************************************************************************************************/
 
 #include "udp_socket.hpp"
-/**
- * @file udp_socket.cpp
- * @brief Class definition for UDP socket creation using IoContext
- * 
- * Classes used are referenced in @ref udp_socket.hpp
- */
+
 namespace _drivers_
 {
 namespace _udp_driver_

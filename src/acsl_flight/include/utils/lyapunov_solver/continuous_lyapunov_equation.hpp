@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -61,9 +60,9 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        continuous_lyapunov_equation.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        June 24, 2024 \n 
+ * File:        continuous_lyapunov_equation.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        June 24, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -79,14 +78,6 @@
 #ifndef CONTINUOUS_LYAPUNOV_EQUATION_HPP_
 #define CONTINUOUS_LYAPUNOV_EQUATION_HPP_
 
-/**
- * @file continuous_lyapunov_equation.hpp
- * @brief The following code uses a different convention from MATLAB.
- * 
- * MATLAB command "lyap(A, Q)" solves the equation: `AX + XAᵀ + Q = 0`
- * So this code provides the same result as obtained in MATLAB using 
- * the command: lyap(A', Q)
- */
 
 #include <Eigen/Dense>
 #include <Eigen/QR>

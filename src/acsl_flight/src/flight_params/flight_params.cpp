@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        flight_params.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 30, 2024 \n 
+ * File:        flight_params.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 30, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -37,12 +36,7 @@
  **********************************************************************************************************************/
 
 #include "flight_params.hpp"
-/**
- * @file flight_params.cpp
- * @brief Define file for the main flight parameters that will be used for the entire controller
- * 
- * Classes used are referenced in @ref flight_params.hpp
- */
+
 namespace _flight_params_
 {
     // Define the parameter reader function
@@ -60,6 +54,7 @@ namespace _flight_params_
         read.hover_time = j["FlightMainParams"]["hover_after_trajectory_time_seconds"];
         read.mocap = j["FlightMainParams"]["mocap"];
         read.vio = j["FlightMainParams"]["vio"];
+        read.weatherApp = j["FlightMainParams"]["weatherApp"];
         read.controller_rate = j["FlightMainParams"]["controller_rate"];
 
         // Read in the trajectory info from the trajectory file.
@@ -71,18 +66,14 @@ namespace _flight_params_
 
         // Set the landing end time
         // This will be the landing_start_time + 4.0 seconds.
-        read.landing_end_time = read.landing_start_time + 4.0;
+        read.landing_end_time = read.landing_start_time + LANDING_TRAJECTORY_EXECUTION_TIME;
 
         // Define the end time 
         // Disarm after the flight ends. this will be a second after landing.
-        read.end_time = read.landing_end_time + 1.0;
+        read.end_time = read.landing_end_time + DISARM_AFTER_LANDING_BUFFER_TIME;
 
-        // Error Statement - If Mocap is true and vio is also true stop the code
-        if (read.vio && read.mocap)
-        {
-            FLIGHTSTACK_ERROR("Both VIO and Mocap are active. Pick one fusion method. Terminating program.");            
-        }
-        else if (!read.vio && !read.mocap)
+        // If you are running with no vision fusion - send out a warning.
+        if (!read.vio && !read.mocap)
         {
             FLIGHTSTACK_WARNING("NO VIO and NO Mocap threads active. Make sure your GPS is functional.");
 
@@ -141,6 +132,10 @@ namespace _flight_params_
         std::cout << std::setw(COL_WIDTH) << COLOR_BLUE << "VIO:" << COLOR_RESET
                   << (run_params.vio ? COLOR_GREEN : COLOR_RED)
                   << (run_params.vio ? "YES" : "NO") << COLOR_RESET << std::endl;
+        
+        std::cout << std::setw(COL_WIDTH) << COLOR_BLUE << "WeatherAPP:" << COLOR_RESET
+                  << (run_params.weatherApp ? COLOR_GREEN : COLOR_RED)
+                  << (run_params.weatherApp ? "YES" : "NO") << COLOR_RESET << std::endl;
 
         std::cout << std::setw(COL_WIDTH) << COLOR_BLUE << "CONTROLLER PERIOD:" << COLOR_RESET
                   << COLOR_GREEN << run_params.controller_rate << "ms" << COLOR_RESET << std::endl;

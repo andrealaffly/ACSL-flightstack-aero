@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        piecewise_polynomial_trajectory.hpp \n 
- * Author:      Mattia Gramuglia, Giri Mugundan Kumar \n 
- * Date:        June 27, 2024 \n 
- * For info:    Andrea L'Afflitto  
+ * File:        piecewise_polynomial_trajectory.hpp
+ * Author:      Mattia Gramuglia, Giri Mugundan Kumar
+ * Date:        June 27, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: Implementation of the piecewise polynomial trajectory. The 
@@ -39,15 +38,7 @@
  **********************************************************************************************************************/
 
 #include "piecewise_polynomial_trajectory.hpp"
-/**
- * @file piecewise_polynomial_trajectory.cpp
- * @brief Implementation of the piecewise polynomial trajectory.
- * 
- *          The code to generate this was written in Matlab by Matti called minimum jerk trajectory. 
- *          Core functionality was written by Matti and modified by Giri to fit acsl_flight.
- * 
- * Classes used are referenced in @ref piecewise_polynomial_trajectory.hpp
- */
+
 namespace _piecewise_polynomial_trajectory_{
 
 // Constructor
@@ -188,7 +179,7 @@ void piecewise_polynomial_trajectory::updateUserDefinedTrajectory(double control
         // Evaluate and update user_defined_acceleration_
         setUserDefinedAcceleration(Vector3d(0.0,
                                             0.0,
-                                            evaluatePolynomial(landing_velocity_coef_z_,
+                                            evaluatePolynomial(landing_acceleration_coef_z_,
                                             controller_time - flight_params_ptr->landing_start_time )));
     }    
     // If the current time has passed the landing end time, stay at the origin       

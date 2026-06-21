@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,9 +42,9 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        mocap.cpp \n
- * Author:      Giri Mugundan Kumar \n
- * Date:        April 20, 2024 \n 
+ * File:        mocap.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 20, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -58,16 +57,6 @@
 
 #include "mocap.hpp"
 
-/**
- * @file mocap.cpp
- * @brief Node definition for UDP socket as a lifecycle node.
- * 
- *          Writes messages to pixhawk mocap_odometry topic for 
- *          EFK2 fusion.
- * 
- * Classes used are referenced in @ref mocap.hpp
- */
-
 namespace lc = rclcpp_lifecycle;
 using LNI = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface;
 using lifecycle_msgs::msg::State;
@@ -76,7 +65,7 @@ namespace _drivers_{
 namespace _udp_driver_{
 
 // Implementing virtual functions from Blackbox
-void UdpReceiverNode::logInitHeaders() {
+void MocapUdpReceiverNode::logInitHeaders() {
   std::ostringstream oss;
 
   oss << ", "
@@ -99,7 +88,7 @@ void UdpReceiverNode::logInitHeaders() {
 }
 
 // Implementing virtual functions from Blackbox
-bool UdpReceiverNode::logInitLogging() {
+bool MocapUdpReceiverNode::logInitLogging() {
     try {
         // Generate the log file name
         std::stringstream log_ss;
@@ -151,7 +140,7 @@ bool UdpReceiverNode::logInitLogging() {
 }
 
 // Implementing virtual functions from Blackbox
-void UdpReceiverNode::logLogData() {
+void MocapUdpReceiverNode::logLogData() {
     // Log the data 
     std::ostringstream oss;
 
@@ -178,9 +167,9 @@ void UdpReceiverNode::logLogData() {
 /// \param[in] ctx A shared IoContext
 /// \param[in] pointer to vehicle states in flight_bridge    
 /// \param[in] string to the global flight run directory
-UdpReceiverNode::UdpReceiverNode(
+MocapUdpReceiverNode::MocapUdpReceiverNode(
   const IoContext & ctx, vehicle_states* d, const std::string & global_log_dir)
-: lc::LifecycleNode("udp_receiver_node"),
+: lc::LifecycleNode("mocap_udp_receiver_node"),
   m_udp_driver{new UdpDriver(ctx)},
   vehicle_ptr(d),
   flight_run_log_directory(global_log_dir)
@@ -193,18 +182,18 @@ UdpReceiverNode::UdpReceiverNode(
 }
 
 /// \brief Get the parameters for the ip and port to ping
-void UdpReceiverNode::get_params()
+void MocapUdpReceiverNode::get_params()
 {
   m_ip = IP_IN_USE;     
 
-  m_port = ODROID_M1S_PORT;
+  m_port = MOCAP_PORT;
 
   RCLCPP_INFO(get_logger(), "ip: %s", m_ip.c_str());
   RCLCPP_INFO(get_logger(), "port: %i", m_port);
 }
 
 /// \brief Destructor - required to manage owned IoContext
-UdpReceiverNode::~UdpReceiverNode()
+MocapUdpReceiverNode::~MocapUdpReceiverNode()
 {
   if (m_owned_ctx) {
     m_owned_ctx->waitForExit();
@@ -214,7 +203,7 @@ UdpReceiverNode::~UdpReceiverNode()
 
 /// \brief Callback from transition to "configuring" state.
 /// \param[in] state The current state that the node is in.
-LNI::CallbackReturn UdpReceiverNode::on_configure(const lc::State & state)
+LNI::CallbackReturn MocapUdpReceiverNode::on_configure(const lc::State & state)
 {
   (void)state;
 
@@ -238,7 +227,7 @@ LNI::CallbackReturn UdpReceiverNode::on_configure(const lc::State & state)
     m_udp_driver->receiver()->open();
     m_udp_driver->receiver()->bind();
     m_udp_driver->receiver()->asyncReceive(
-      std::bind(&UdpReceiverNode::receiver_callback, this, std::placeholders::_1));
+      std::bind(&MocapUdpReceiverNode::receiver_callback, this, std::placeholders::_1));
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(
       get_logger(), "Error creating UDP receiver: %s:%i - %s",
@@ -253,7 +242,7 @@ LNI::CallbackReturn UdpReceiverNode::on_configure(const lc::State & state)
 
 /// \brief Callback from transition to "activating" state.
 /// \param[in] state The current state that the node is in.
-LNI::CallbackReturn UdpReceiverNode::on_activate(const lc::State & state)
+LNI::CallbackReturn MocapUdpReceiverNode::on_activate(const lc::State & state)
 {
   (void)state;
   mocap_publisher_->on_activate();
@@ -264,7 +253,7 @@ LNI::CallbackReturn UdpReceiverNode::on_activate(const lc::State & state)
 
 /// \brief Callback from transition to "deactivating" state.
 /// \param[in] state The current state that the node is in.
-LNI::CallbackReturn UdpReceiverNode::on_deactivate(const lc::State & state)
+LNI::CallbackReturn MocapUdpReceiverNode::on_deactivate(const lc::State & state)
 {
   (void)state;
   mocap_publisher_->on_deactivate();
@@ -275,7 +264,7 @@ LNI::CallbackReturn UdpReceiverNode::on_deactivate(const lc::State & state)
 
 /// \brief Callback from transition to "unconfigured" state.
 /// \param[in] state The current state that the node is in.
-LNI::CallbackReturn UdpReceiverNode::on_cleanup(const lc::State & state)
+LNI::CallbackReturn MocapUdpReceiverNode::on_cleanup(const lc::State & state)
 {
   (void)state;
   m_udp_driver->receiver()->close();
@@ -286,7 +275,7 @@ LNI::CallbackReturn UdpReceiverNode::on_cleanup(const lc::State & state)
 
 /// \brief Callback from transition to "shutdown" state.
 /// \param[in] state The current state that the node is in.
-LNI::CallbackReturn UdpReceiverNode::on_shutdown(const lc::State & state)
+LNI::CallbackReturn MocapUdpReceiverNode::on_shutdown(const lc::State & state)
 {
   (void)state;
   RCLCPP_DEBUG(get_logger(), "UDP receiver shutting down.");
@@ -294,10 +283,10 @@ LNI::CallbackReturn UdpReceiverNode::on_shutdown(const lc::State & state)
 }
 
 /// \brief Debugger function to output the mocap data.
-void UdpReceiverNode::debugMocapData2screen()
+void MocapUdpReceiverNode::debugMocapData2screen()
 {
   // Output the parsed data
-  FLIGHTSTACK_INFO("PixTime: ", mc_im.control_time);
+  FLIGHTSTACK_INFO("Time: ", mc_im.control_time);
   std::cout << "Position (x, y, z): " 
             << mc_im.x << ", " 
             << mc_im.y << ", " 
@@ -321,7 +310,7 @@ void UdpReceiverNode::debugMocapData2screen()
 }
 
 /// \brief Callback for receiving a UDP datagram
-void UdpReceiverNode::receiver_callback(const std::vector<uint8_t> & buffer)
+void MocapUdpReceiverNode::receiver_callback(const std::vector<uint8_t> & buffer)
 {
   // Convert the buffer to a string
   std::string buffer_str(buffer.begin(), buffer.end());
@@ -336,10 +325,10 @@ void UdpReceiverNode::receiver_callback(const std::vector<uint8_t> & buffer)
   // Parse the data from the string
   std::istringstream iss(buffer_str.substr(2)); // Skip "R," prefix
   char comma;
-  iss >> mc_im.x >> comma >> mc_im.y >> comma >> mc_im.z >> comma                       // Read in the position 
+  iss >> mc_im.x >> comma >> mc_im.y >> comma >> mc_im.z >> comma                          // Read in the position 
       >> mc_im.q0 >> comma >> mc_im.q1 >> comma >> mc_im.q2 >> comma >> mc_im.q3 >> comma  // Read in the quaternion
-      >> mc_im.vx >> comma >> mc_im.vy >> comma >> mc_im.vz >> comma                    // Read in the velocities
-      >> mc_im.rollspeed >> comma >> mc_im.pitchspeed >> comma >> mc_im.yawspeed;       // Read in the angular speeds
+      >> mc_im.vx >> comma >> mc_im.vy >> comma >> mc_im.vz >> comma                       // Read in the velocities
+      >> mc_im.rollspeed >> comma >> mc_im.pitchspeed >> comma >> mc_im.yawspeed;          // Read in the angular speeds
 
   // Get the controller time
   mc_im.control_time = vehicle_ptr->get_controltime();

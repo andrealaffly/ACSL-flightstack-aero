@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        helper_functions.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        May 29, 2024 \n 
+ * File:        helper_functions.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        May 29, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -39,11 +38,6 @@
 #ifndef HELPER_FUNCTIONS_HPP_
 #define HELPER_FUNCTIONS_HPP_
 
-/**
- * @file helper_functions.hpp
- * @brief Definitions of some standard templates used in all controllers.
- */
-
 #include <array>                         // Include the header for std::array
 #include <Eigen/Dense>                   // Include the Eigen library
 #include <nlohmann/json.hpp>             // Include the nlohmann JSON library
@@ -53,6 +47,7 @@
 #include <boost/numeric/odeint.hpp>
 #include <boost/numeric/interval.hpp>
 #include <boost/numeric/odeint/stepper/runge_kutta4.hpp>
+#include <boost/numeric/odeint/stepper/runge_kutta_cash_karp54.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/math/tools/polynomial.hpp>
@@ -70,6 +65,9 @@
 #include <chrono>
 #include <functional>
 #include <continuous_lyapunov_equation.hpp>
+#include <tuple>
+#include <optional>
+#include <sine_wave_generator.hpp>
 
 using namespace Eigen;
 namespace bph = boost::placeholders; // Use the correct namespace
@@ -83,18 +81,6 @@ namespace _utilities_
     //                coeffs << 1, -2, 1; // Represents the polynomial x^2 - 2x + 1
     //                double result = evaluatePolynomial(coeffs, value);
     template <typename VectorType, typename ScalarType>
-    /**
-     * @brief Function to evaluate a polynomial given its coefficients and a value at which to evaluate the polynomial
-     * 
-     * Example usage: double value = 3.0;
-     *                Eigen::VectorXd coeffs(3);
-     *                coeffs << 1, -2, 1; // Represents the polynomial x^2 - 2x + 1
-     *                double result = evaluatePolynomial(coeffs, value);
-     * 
-     * @param coefficients 
-     * @param value 
-     * @return ScalarType 
-     */
     inline ScalarType evaluatePolynomial(const VectorType coefficients, ScalarType value) {
         ScalarType result = 0;
         for (int i = 0, deg = coefficients.size() - 1; deg >= 0; deg--, i++)
@@ -148,15 +134,6 @@ namespace _utilities_
     // Example Usage: Eigen::MatrixXd poly_coeff_matrix_in(3, 4);
     //                Eigen::MatrixXd result = polyDerMatrix(poly_coeff_matrix_in);
     template<typename MatrixType>
-    /**
-     * @brief Function to compute the derivative of the piecewise polynomial coefficient matrix
-     * 
-     * Example Usage: Eigen::MatrixXd poly_coeff_matrix_in(3, 4);
-     *                Eigen::MatrixXd result = polyDerMatrix(poly_coeff_matrix_in);
-     * 
-     * @param poly_coeff_matrix_in 
-     * @return MatrixType 
-     */
     inline MatrixType polyDerMatrix(const MatrixType& poly_coeff_matrix_in)
     {
         // Get the size of the input matrix
@@ -179,11 +156,6 @@ namespace _utilities_
 
     // Wraps an angle `alpha` to the interval [-pi, pi]
     template <typename T>
-    /**
-     * @brief Wraps an angle `alpha` to the interval [-pi, pi]
-     * @param alpha 
-     * @return T 
-     */
     inline T wrapAngleToMinusPiAndPi(T alpha)
     {
         return alpha - T(2 * M_PI) * std::floor((alpha + T(M_PI)) / (T(2 * M_PI)));
@@ -193,16 +165,6 @@ namespace _utilities_
     // Example usage :  double result = makeYawAngularErrorContinuous<double>(yaw, user_defined_yaw);
     // Example usage :  float result = makeYawAngularErrorContinuous<float>(yaw_float, user_defined_yaw_float);
     template <typename T>
-    /**
-     * @brief Makes the yaw angular error continuous considering the discontinuity at +/- pi
-     * 
-     * Example usage :  double result = makeYawAngularErrorContinuous<double>(yaw, user_defined_yaw);
-     * Example usage :  float result = makeYawAngularErrorContinuous<float>(yaw_float, user_defined_yaw_float);
-     * 
-     * @param yaw 
-     * @param user_defined_yaw 
-     * @return T 
-     */
     inline T makeYawAngularErrorContinuous(T yaw, T user_defined_yaw)
     {
         T continuous_error;
@@ -231,15 +193,6 @@ namespace _utilities_
     // Example usage : Eigen::Matrix<double, 3, 3> matrix3x3_double = jsonToMatrix<double, 3, 3>(jsonMatrix);
     // Example usage : Eigen::Matrix<float, 4, 4> matrix4x4_float = jsonToMatrix<float, 4, 4>(jsonMatrix);
     template<typename Scalar, int Rows, int Cols>
-    /**
-     * @brief Helper function to extract matrices from json files.
-     * 
-     * Example usage : Eigen::Matrix<double, 3, 3> matrix3x3_double = jsonToMatrix<double, 3, 3>(jsonMatrix)
-     * Example usage : Eigen::Matrix<float, 4, 4> matrix4x4_float = jsonToMatrix<float, 4, 4>(jsonMatrix)
-     * 
-     * @param jsonMatrix 
-     * @return Eigen::Matrix<Scalar, Rows, Cols> 
-     */
     inline Eigen::Matrix<Scalar, Rows, Cols> jsonToMatrix(const nlohmann::json& jsonMatrix) {
         Eigen::Matrix<Scalar, Rows, Cols> matrix;
         for (int i = 0; i < Rows; ++i) {
@@ -254,15 +207,6 @@ namespace _utilities_
     // Example usage: Eigen::Matrix<double, 3, 3> matrix3x3_double = jsonToScaledMatrix<double, 3, 3>(jsonMatrix);
     // Example usage: Eigen::Matrix<float, 3, 3> matrix3x3_double = jsonToScaledMatrix<float, 3, 3>(jsonMatrix);
     template<typename Scalar, int Rows, int Cols>
-    /**
-     * @brief Helper funtion to extract matrices with a scaling factor from json files.
-     * 
-     * Example usage: Eigen::Matrix<double, 3, 3> matrix3x3_double = jsonToScaledMatrix<double, 3, 3>(jsonMatrix)
-     * Example usage: Eigen::Matrix<float, 3, 3> matrix3x3_double = jsonToScaledMatrix<float, 3, 3>(jsonMatrix)
-     * 
-     * @param jsonMatrix 
-     * @return Eigen::Matrix<Scalar, Rows, Cols> 
-     */
     inline Eigen::Matrix<Scalar, Rows, Cols> jsonToScaledMatrix(const nlohmann::json& jsonMatrix) {
         
         // Extract the scaling coefficient
@@ -285,11 +229,6 @@ namespace _utilities_
 
     // Inline template function to check NaN for scalar values
     template <typename T>
-    /**
-     * @brief Inline template function to check NaN for scalar values
-     * @param value 
-     * @param message 
-     */
     inline void checkNaN(T value, const char* message) {
         if (std::isnan(value)) {
             throw std::runtime_error(message);
@@ -298,11 +237,6 @@ namespace _utilities_
 
     // Inline template function to check NaN for Eigen matrices
     template <typename Derived>
-    /**
-     * @brief Inline template function to check NaN for Eigen matrices
-     * @param matrix 
-     * @param message 
-     */
     inline void checkNaN(const Eigen::MatrixBase<Derived>& matrix, const char* message) {
         if (!matrix.allFinite()) {
             throw std::runtime_error(message);
@@ -311,10 +245,6 @@ namespace _utilities_
 
     // Function to initialize a fixed-size Eigen matrix to zero
     template <typename MatrixType>
-    /**
-     * @brief Function to initialize a fixed-size Eigen matrix to zero
-     * @param matrix 
-     */
     inline void initMat(MatrixType& matrix) {
         matrix.setZero();
     }
@@ -323,17 +253,6 @@ namespace _utilities_
     // rotation_matrix_321_local_to_global = R3 * R2 * R1; // hence
     // rotation_matrix_321_global_to_local = R1_transpose * R2_transpose * R3_transpose;
     template <typename Scalar>
-    /**
-     * @brief Function that computes the 321 rotation matrix that transforms a vector from global to local coordinates.
-     * 
-     * rotation_matrix_321_local_to_global = R3 * R2 * R1; // hence
-     * rotation_matrix_321_global_to_local = R1_transpose * R2_transpose * R3_transpose
-     * 
-     * @param roll 
-     * @param pitch 
-     * @param yaw 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     inline Eigen::Matrix<Scalar, 3, 3> rotationMatrix321GlobalToLocal(const Scalar roll, const Scalar pitch, const Scalar yaw) 
     {
         Eigen::Matrix<Scalar, 3, 3> rotation_matrix_321_global_to_local;
@@ -366,15 +285,6 @@ namespace _utilities_
 
     // Function that computes the 321 rotation matrix that transforms a vector from local to global coordinates.
     // rotation_matrix_321_local_to_global = R3 * R2 * R1
-    /**
-     * @brief Function that computes the 321 rotation matrix that transforms a vector from local to global coordinates rotation_matrix_321_local_to_global = R3 * R2 * R1
-     * 
-     * @tparam Scalar 
-     * @param roll 
-     * @param pitch 
-     * @param yaw 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     template <typename Scalar>
     inline Eigen::Matrix<Scalar, 3, 3> rotationMatrix321LocalToGlobal(const Scalar roll, const Scalar pitch, const Scalar yaw)
     {
@@ -411,17 +321,6 @@ namespace _utilities_
     //                double pitch = 0.2;
     //                Eigen::Matrix3d jacobian_inv = jacobianMatrixInverse(roll, pitch);
     template <typename Scalar>
-    /**
-     * @brief Function that returns a 3x3 Jacobian matrix inverse given roll and pitch angles.
-     * 
-     * Example usage: double roll = 0.1;                
-     *                double pitch = 0.2;
-     *                Eigen::Matrix3d jacobian_inv = jacobianMatrixInverse(roll, pitch);
-     * 
-     * @param roll 
-     * @param pitch 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     inline Eigen::Matrix<Scalar, 3, 3> jacobianMatrixInverse(const Scalar roll, const Scalar pitch) {
         // Ensure pitch is not near +/- pi/2 to avoid division by zero
         if (std::abs(std::cos(pitch)) < static_cast<Scalar>(1e-6)) {
@@ -447,12 +346,6 @@ namespace _utilities_
 
     // Function that computes the Jacobian matrix given roll and pitch angles
     template <typename Scalar>
-    /**
-     * @brief Function that computes the Jacobian matrix given roll and pitch angles
-     * @param roll 
-     * @param pitch 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     inline Eigen::Matrix<Scalar, 3, 3> jacobianMatrix(const Scalar roll, const Scalar pitch) {
 
         Eigen::Matrix<Scalar, 3, 3> jacobian_matrix;
@@ -474,22 +367,9 @@ namespace _utilities_
 
     // Function that returns a 3x3 Jacobian matrix derivative given roll and pitch angles and their derivatives.
     // Example usage: double roll = 0.1;
-    //                Example usage: double roll = 0.1;
+    //                double pitch = 0.2;
     //                Eigen::Matrix3d jacobian_dot = jacobianMatrixDerivative(roll, pitch, roll_dot, pitch_dot);
     template <typename Scalar>
-    /**
-     * @brief Function that returns a 3x3 Jacobian matrix derivative given roll and pitch angles and their derivatives.
-     * 
-     * Example usage: double roll = 0.1;
-     *                Example usage: double roll = 0.1;
-     *                Eigen::Matrix3d jacobian_dot = jacobianMatrixDerivative(roll, pitch, roll_dot, pitch_dot);  
-     * 
-     * @param roll 
-     * @param pitch 
-     * @param roll_dot 
-     * @param pitch_dot 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     inline Eigen::Matrix<Scalar, 3, 3> jacobianMatrixDerivative(const Scalar roll, const Scalar pitch, 
                                                                 const Scalar roll_dot, const Scalar pitch_dot) {
 
@@ -518,17 +398,6 @@ namespace _utilities_
     //                float beta
     //                Eigen::Matrix3f R_W_J = aeroDCMQuadNED(alpha, beta)
     template <typename Scalar>
-    /**
-     * @brief Function that returns a 3x3 Aerodynamic rotation matrix from Wind to Local frame.
-     * 
-     * Example usage: float alpha
-     *                float beta
-     *                Eigen::Matrix3f R_W_J = aeroDCMQuadNED(alpha, beta) 
-     * 
-     * @param alpha 
-     * @param beta 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     inline Eigen::Matrix<Scalar, 3, 3> aeroDCMQuadNED(const Scalar alpha, const Scalar beta) {
 
         Eigen::Matrix<Scalar, 3, 3> DCMQuadNED;
@@ -553,17 +422,6 @@ namespace _utilities_
     //                float beta
     //                Eigen::Matrix3f R_W_J = aeroDCMBiplaneNED(alpha, eta)
     template <typename Scalar>
-    /**
-     * @brief Function that returns a 3x3 Aerodynamic rotation matrix from Wind to Local frame.
-     * 
-     * Example usage: float alpha
-     *                float beta
-     *                Eigen::Matrix3f R_W_J = aeroDCMBiplaneNED(alpha, eta)
-     * 
-     * @param alpha 
-     * @param beta 
-     * @return Eigen::Matrix<Scalar, 3, 3> 
-     */
     inline Eigen::Matrix<Scalar, 3, 3> aeroDCMBiplaneNED(const Scalar alpha, const Scalar beta) {
 
         Eigen::Matrix<Scalar, 3, 3> DCMBiplaneNED;
@@ -589,28 +447,16 @@ namespace _utilities_
 
     // Assigns elements to dxdt in the model for integration
     template<typename T, int Rows, int Cols, std::size_t N>
-    /**
-     * @brief Assigns elements to dxdt in the model for integration
-     * @param entity 
-     * @param dxdt 
-     * @param current_index 
-     */
     inline void assignElementsToDxdt(Eigen::Matrix<T, Rows, Cols>& entity, boost::array<T, N>& dxdt,
                                      int& current_index)
     {
         std::size_t elements_to_copy = std::min<std::size_t>(entity.size(), dxdt.size() - current_index);
         std::copy(entity.data(), entity.data() + elements_to_copy, dxdt.begin() + current_index);
         current_index += elements_to_copy;
-    }
+    }   
 
     // Assign a map for elements from the boost array to the states after integration.
     template<typename T, int Rows, int Cols, std::size_t N>
-    /**
-     * @brief Assign a map for elements from the boost array to the states after integration.
-     * @param entity 
-     * @param x 
-     * @param current_index 
-     */
     inline void assignElementsToMembers(Eigen::Matrix<T, Rows, Cols>& entity, boost::array<T, N>& x,
                                         int& current_index)
     {
@@ -625,14 +471,6 @@ namespace _utilities_
     // Assign a map for elements from the boost array to the states after integration with the option to reset the 
     // elements 
     template<typename T, int Rows, int Cols, std::size_t N>
-    /**
-     * @brief Assign a map for elements from the boost array to the states after integration with the option to reset the elements
-     * 
-     * @param entity 
-     * @param x 
-     * @param current_index 
-     * @param zeros 
-     */
     inline void resetElementsToMembers(Eigen::Matrix<T, Rows, Cols>& entity, boost::array<T, N>& x,
                                        int& current_index, boost::array<T, N>& zeros)
     {
@@ -645,7 +483,30 @@ namespace _utilities_
 
         // Update the current index by the number of elements in the matrix
         current_index += Rows * Cols;
-}
+    }
+
+    // Templated version for fundamental types (restricted to non-Eigen types)
+    template<typename T, std::size_t N, typename std::enable_if<std::is_fundamental<T>::value, int>::type = 0>
+    inline void assignElementsToDxdt(T& entity, boost::array<T, N>& dxdt, int& current_index)
+    {
+        dxdt[current_index] = entity;
+        current_index++;
+    }
+
+    // Templated version for fundamental types (restricted to non-Eigen types)
+    template<typename T, std::size_t N, typename std::enable_if<std::is_fundamental<T>::value, int>::type = 0>
+    inline void assignElementsToMembers(T& entity, boost::array<T, N>& x, int& current_index)
+    {
+        entity = x[current_index];
+        current_index++;
+    }
+
+    // Assign elements to the output array after integration. 
+    template<typename T, int Rows, int Cols, std::size_t N>
+    inline void assignElementsToX(Eigen::Matrix<T, Rows, Cols>& entity, boost::array<T, N>& X, const int index)    {
+        std::size_t elements_to_copy = std::min<std::size_t>(entity.size(), X.size() - index);
+        std::copy(entity.data(), entity.data() + elements_to_copy, X.begin() + index);
+    }
 
 
 

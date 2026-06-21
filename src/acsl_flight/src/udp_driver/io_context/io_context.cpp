@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,140 +42,86 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        io_context.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 21, 2024 \n 
+ * File:        io_context.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 21, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: Class declaration for IoContext to manage thread for udp.
+ * Description: Class definition for IoContext to manage thread for udp.
  * 
  * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged
  **********************************************************************************************************************/
 
-#ifndef IO_CONTEXT_HPP_
-#define IO_CONTEXT_HPP_
+#include "io_context.hpp"
 
-/**
- * @file io_context.hpp
- * @brief Class decleration for IoContext to manage thread for udp.
- */
-
-#include <memory>
-#include <vector>
-#include <utility>
-#include <asio.hpp>
-#include <iostream>
-
-#include "rclcpp/logging.hpp"
 
 namespace _drivers_
 {
 namespace _common_
 {
 
-///! A workaround of boost::thread_group
-// Copied from https://gist.github.com/coin-au-carre/ceb8a790cec3b3535b015be3ec2a1ce2
-/**
- * @struct thread_group
- * @brief A workaround of boost::thread_group
- * 
- * Copied from https://gist.github.com/coin-au-carre/ceb8a790cec3b3535b015be3ec2a1ce2
- */
-struct thread_group
+// Delegating to the modified constructor with -1 for default CPU
+IoContext::IoContext()
+: IoContext(std::thread::hardware_concurrency(), -1) {}
+
+IoContext::IoContext(size_t threads_count, int cpu)
+: m_ios(new asio::io_service()),
+  m_work(new asio::io_service::work(ios())),
+  m_ios_thread_workers(new _drivers_::_common_::thread_group())
 {
-  std::vector<std::thread> tg;
-
-  thread_group()                                  = default;
-  thread_group(const thread_group &)               = delete;
-  thread_group & operator=(const thread_group &)    = delete;
-  thread_group(thread_group &&)                   = delete;
-
-  template<class ... Args>
-  /**
-   * @brief Create a thread object
-   * 
-   * @param args 
-   */
-  void create_thread(Args && ... args) {tg.emplace_back(std::forward<Args>(args)...);}
-
-  /**
-   * @brief add said thread object
-   * 
-   * @param t 
-   */
-  void add_thread(std::thread && t) {tg.emplace_back(std::move(t));}
-
-  std::size_t size() const {return tg.size();}
-
-  /**
-   * @brief joining all the threads
-   * @param None
-   */
-  void join_all()
-  {
-    for (auto & thread : tg) {
-      if (thread.joinable()) {
-        thread.join();
-      }
-    }
+  for (size_t i = 0; i < threads_count; ++i) {
+    m_ios_thread_workers->create_thread(
+      [this]() {
+        ios().run();
+      });
   }
 
-  /**
-   * @brief set all of the pins to cpu
-   * 
-   * @param cpu 
-   */
-  void pin_all_to_cpu(int cpu)
-    {
-        cpu_set_t cpuset;
-        CPU_ZERO(&cpuset);
-        CPU_SET(cpu, &cpuset);
-
-        for (auto & thread : tg) {
-            pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
-        }
+  // Pin all threads to the specified CPU if a valid CPU number is provided
+    if (cpu >= 0) {
+        m_ios_thread_workers->pin_all_to_cpu(cpu);
     }
 
-};
+    if (cpu >= 0) {
+        RCLCPP_INFO_STREAM(
+            rclcpp::get_logger("IoContext::IoContext"),
+            "Thread(s) Created: " << serviceThreadCount() << ". Pinned to CPU: " << cpu);
+    } else {
+        RCLCPP_INFO_STREAM(
+            rclcpp::get_logger("IoContext::IoContext"),
+            "Thread(s) Created: " << serviceThreadCount() << ". No CPU pinning.");
+    }
+}
 
-/**
- * @class IoContext
- * @brief IoContext class
- */
-class IoContext
+IoContext::~IoContext()
 {
-public:
-  IoContext();
-  explicit IoContext(size_t threads_count, int cpu);
-  ~IoContext();
+  waitForExit();
+}
 
-  IoContext(const IoContext &) = delete;
-  IoContext & operator=(const IoContext &) = delete;
+asio::io_service & IoContext::ios() const
+{
+  return *m_ios;
+}
 
-  asio::io_service & ios() const;
+bool IoContext::isServiceStopped()
+{
+  return ios().stopped();
+}
 
-  bool isServiceStopped();
-  uint32_t serviceThreadCount();
+uint32_t IoContext::serviceThreadCount()
+{
+  return m_ios_thread_workers->size();
+}
 
-  void waitForExit();
-
-  template<class F>
-  void post(F f)
-  {
-    ios().post(f);
+void IoContext::waitForExit()
+{
+  if (!ios().stopped()) {
+    ios().post([&]() {m_work.reset();});
   }
 
-private:
-  std::shared_ptr<asio::io_service> m_ios;
-  std::shared_ptr<asio::io_service::work> m_work;
-  std::shared_ptr<_drivers_::_common_::thread_group> m_ios_thread_workers;
-};
+  ios().stop();
+  m_ios_thread_workers->join_all();
+}
 
 }   // namespace _common_
 }   // namespace _drivers_
-
-
-
-
-#endif  // IO_CONTEXT_HPP_

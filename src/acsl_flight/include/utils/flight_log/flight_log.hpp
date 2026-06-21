@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,15 +21,15 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        flight_log.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 25, 2024 \n 
- * For info:    Andrea L'Afflitto
+ * File:        flight_log.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 25, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: Utilities for logging flight data. Virtual class with fixed
+ * Description: Utilities for logging flight data. Class with fixed
  *              members that needs to be utilized with all the functions
  *              in each control algorithm.
  * 
@@ -39,13 +38,6 @@
 
 #ifndef FLIGHT_LOG_HPP_
 #define FLIGHT_LOG_HPP_
-
-/**
- * @file flight_log.hpp
- * @brief Utilities for logging flight data
- * 
- * Virtual class with fixed members that needs to be utilized with all the functions in each control algorithm.
- */
 
 #include <atomic>
 #include <chrono>
@@ -88,32 +80,64 @@ namespace keywords = boost::log::keywords;
 
 namespace _flight_log_
 {
-    /**
-     * @class blackbox
-     */
-    class blackbox
-    {
-        public:
-            // Constructor
-            blackbox() {}
 
-            // Virutal Desctuctor
-            ~blackbox() {}
+class blackbox
+{
+    public:
+        // Constructor
+        blackbox() {}
 
-            void logInitHeaders(); 
-            bool logInitLogging();
-            void logLogData();   
+        // Destructor
+        ~blackbox() {}
 
-        protected:
-            // Define the logger for LogData
-            src::logger logger_logdata;
+        void logInitHeaders(); 
+        bool logInitLogging();
+        void logLogData();   
 
-            // Define the logger for MocapData
-            src::logger logger_mocapdata;
+    protected:
+        // Define the logger for LogData
+        src::logger logger_logdata;
 
-            // Define the logger for VioData
-            src::logger logger_viodata;
-    };
+        // Define the logger for MocapData
+        src::logger logger_mocapdata;
+
+        // Define the logger for VioData
+        src::logger logger_viodata;
+
+        // Define the logger for WeatherData
+        src::logger logger_weatherdata;
+
+        // Function for logging the data
+        // Helper function to append elements from an Eigen vector or matrix
+        template <typename Derived>
+        void appendEigenData(std::ostringstream& oss, const Eigen::MatrixBase<Derived>& data);
+
+        // Helper function to append headers for an Eigen vector or matrix
+        template<typename Derived>
+        void generateMatrixHeaders(std::ostringstream& oss, const std::string& matrixName,
+                                   const Eigen::MatrixBase<Derived>& matrix, const std::string& unit);
+
+};
+
+// Inline template definition for logging Eigen vector or matrix
+template <typename Derived>
+inline void blackbox::appendEigenData(std::ostringstream& oss, const Eigen::MatrixBase<Derived>& data) {
+    for (int i = 0; i < data.size(); ++i) {
+        oss << data(i) << ", ";
+    }
+}
+
+// Inline template definition for logging the headers for Eigen vector or matrix
+template <typename Derived>
+inline void blackbox::generateMatrixHeaders(std::ostringstream& oss, const std::string& matrixName, 
+                                            const Eigen::MatrixBase<Derived>& matrix, const std::string& unit) {
+    for (int col = 0; col < matrix.cols(); ++col) {             // Iterate over columns first
+        for (int row = 0; row < matrix.rows(); ++row) {         // Then iterate over rows
+            oss << matrixName << " index-(" << row  << "|" << col << ") " << unit << ", ";
+        }
+    }
+}
+
 
 } // namespace _flight_log_
 

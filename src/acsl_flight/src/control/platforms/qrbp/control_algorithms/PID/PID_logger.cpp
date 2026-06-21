@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        PID_logger.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        June 26, 2024 \n 
- * For info:    Andrea L'Afflitto \n  
+ * File:        PID_logger.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        June 26, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: logging for the PID controller. Inherits the Blackbox class
@@ -49,19 +48,10 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
 */
 
 #include <PID_logger.hpp>
-/**
- * @file PID_logger.cpp
- * @brief logging for the PID controller.
- * 
- * Inherits the Blackbox class for logging and takes in the internal members for the PID.
- * 
- * Classes used are referenced in @ref PID_logger.hpp
- */
+
 namespace _qrbp_{
 namespace _pid_{
-/**
- * @class pid_logger
- */
+
 pid_logger::pid_logger(controller_internal_members* cim, controller_integrated_state_members* csm, 
                        Eigen::Vector<float, 8>* control_input, const std::string & controller_log_dir_) : 
                        CIM(cim), CSM(csm), cntrl_input(control_input),

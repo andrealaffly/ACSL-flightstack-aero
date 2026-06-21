@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        MRAC_PID.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        May 14, 2024 \n 
- * For info:    Andrea L'Afflitto  \n 
+ * File:        MRAC_PID.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        May 14, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: MRAC_PID for the QRBP. Inherts the class controller_base 
@@ -50,21 +49,11 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
 */
 
 #include "MRAC_PID.hpp"
-/**
- * @file MRAC_PID.cpp
- * @brief MRAC_PID for the QRBP
- * 
- * Inherts the class controller_base for the basic functionality that is to be used for all control algorithms.
- * 
- * Classes used are referenced in @ref MRAC_PID.hpp
- */
+
 namespace _qrbp_{
 namespace _mrac_pid_{
 
 // Constructor - Take care to initialize the logger
-/**
- * @class mrac_pid
- */
 mrac_pid::mrac_pid(flight_params* p, const std::string & controller_log_dir_) :
           controller_base(p), ud(p), logger(&cim, &csm, &control_input, controller_log_dir_) {
     
@@ -825,7 +814,7 @@ void mrac_pid::run(const double time_step_rk4_) {
     
     // Process the dynamics --------------------------------------------------------
     // 1. Compute the aerodynamics 
-    compute_aero_forces_moments(cim.aero.states, cim.aero.coeff, cim.R_Jq_I, cim.R_W_Jq);
+    cim.aero.dyn = compute_aero_forces_moments(cim.aero.states, cim.aero.coeff, cim.R_Jq_I, cim.R_W_Jq);
 
     // 2. Compute the regressor vector for the outer loop
     compute_outer_loop_regressor();

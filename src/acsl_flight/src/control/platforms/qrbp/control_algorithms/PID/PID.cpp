@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        PID.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        May 14, 2024 \n 
- * For info:    Andrea L'Afflitto  
+ * File:        PID.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        May 14, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: PID for the QRBP. Inherts the class controller_base for the
@@ -50,20 +49,11 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
 */
 
 #include "PID.hpp"
-/**
- * @file PID.cpp
- * @brief PID for the QRBP
- * Inherts the class controller_base for the basic functionality that is to be used for all control algorithms.
- * 
- * Classes used are referenced in @ref PID.hpp
- */
+
 namespace _qrbp_{
 namespace _pid_{
 
 // Constructor - Take care to initialize the logger
-/**
- * @class pid
- */
 pid::pid(flight_params* p, const std::string & controller_log_dir_) : 
      controller_base(p), ud(p), logger(&cim, &csm, &control_input, controller_log_dir_) {
     

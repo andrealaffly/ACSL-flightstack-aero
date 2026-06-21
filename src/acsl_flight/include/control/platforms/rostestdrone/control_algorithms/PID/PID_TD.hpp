@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        PID_TD.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        July 10, 2024 \n 
+ * File:        PID_TD.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        July 10, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -47,12 +46,7 @@
 
 #ifndef CONTROLLERS_PID_TD_HPP_
 #define CONTROLLERS_PID_TD_HPP_
-/**
- * @file PID_TD.hpp
- * @brief PID for the ros test drone.
- * 
- * Inherits controller_base class for the basic functionality that is to be used for all control algorithms.
- */
+
 #include "rostestdrone.hpp"           // Header file for vehicle specific information and some other functions
 #include "control_algorithm_base.hpp" // Include for the base class for the basis of control algorithms
 #include "PID_TD_members.hpp"         // Include for all the members of the PID class
@@ -67,10 +61,6 @@ namespace _rostestdrone_{
 namespace _pid_{
 
 // class pid : public controller_base, public blackbox 
-/**
- * @class pid
- * @brief class pid : public controller_base, public blackbox 
- */
 class pid : public controller_base
 {
   public:
@@ -81,34 +71,7 @@ class pid : public controller_base
     ~pid();
 
     // Implementing functions from controller_base
-
-    /**
-     * @brief Run the class pid
-     * @param time_step_rk4_ 
-     */
     void run(const double time_step_rk4_);
-    
-    /**
-     * @brief Update pid class
-     * 
-     * @param time 
-     * @param x 
-     * @param y 
-     * @param z 
-     * @param vx 
-     * @param vy 
-     * @param vz 
-     * @param q0 
-     * @param q1 
-     * @param q2 
-     * @param q3 
-     * @param roll 
-     * @param pitch 
-     * @param yaw 
-     * @param w_x 
-     * @param w_y 
-     * @param w_z 
-     */
     void update(double time, 
                 double x,
                 double y,
@@ -139,11 +102,6 @@ class pid : public controller_base
   
   private:     
     // Implementing functions from controller_base
-    /**
-     * @brief Read the parameters from the json file
-     * 
-     * @param jsonFile 
-     */
     void read_params(const std::string& jsonFile); 
     void init();
 
@@ -162,13 +120,6 @@ class pid : public controller_base
     rk4_array<double, 14> zeros;
 
     // Define the model
-    /**
-     * @brief Define model
-     * 
-     * @param y 
-     * @param dy 
-     * @param t 
-     */
     void model(const rk4_array<double, 14> &y, rk4_array<double, 14> &dy, double t);
 
     // Create a RungeKutta object.
@@ -185,45 +136,21 @@ class pid : public controller_base
 
   private:
     // Function to compute the translational control in the inertial frame
-    /**
-     * @brief Compute the translational control in the inertial frame
-     * @param None
-     */
     void compute_translational_control_in_I();
 
     // Function to compute the thrust (u1) and the desired angles
-    /**
-     * @brief compute the thrust (u1) and the desired angles
-     * @param None
-     */
     void compute_u1_eta_d();
 
     // Function to compute the rotational control input
-    /**
-     * @brief Compute the rotational control input
-     * @param None
-     */
     void compute_rotational_control();
 
     // Function to compute the normalized thrust
-    /**
-     * @brief Compute the normalized thrust
-     * @param None
-     */
     void compute_normalized_thrusts();
 
     // Assign the values from rk4 to controller internal members
-    /**
-     * @brief Assign the values from rk4 to controller internal members
-     * @param None
-     */
     void assign_from_rk4();
 
     // Function to print to terminal
-    /**
-     * @brief Function to print to terminal
-     * @param None
-     */
     void debug2terminal();
 
 };

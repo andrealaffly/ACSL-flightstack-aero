@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,10 +42,10 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        vio.cpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        September 05, 2024 \n 
- * For info:    Andrea L'Afflitto
+ * File:        vio.cpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        September 05, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: Node definition for Intel Realsense T265 tracking camera as a lifecycle node.
@@ -56,14 +55,7 @@
  **********************************************************************************************************************/
 
 #include "vio.hpp"
-/**
- * @file vio.cpp
- * @brief Node definition for Intel Realsense T265 tracking camera as a lifecycle node.
- * 
- * Writes messages to pixhawk mocap_odometry topic for EKF2 fusion.
- * 
- * Classes used are referenced in @ref vio.hpp
- */
+
 namespace lc = rclcpp_lifecycle;
 using LNI = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface;
 using lifecycle_msgs::msg::State;

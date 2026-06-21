@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        rostestdrone.hpp \n  
- * Author:      Giri Mugundan Kumar \n 
- * Date:        July 10, 2024 \n 
+ * File:        rostestdrone.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        July 10, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -47,12 +46,6 @@
 #ifndef ROSTESTDRONE_HPP_
 #define ROSTESTDRONE_HPP_
 
-/**
- * @file rostestdrone.hpp
- * @brief Vehicle Information of the rostestdrone with the T-Motor 
- * 
- * P2305 kv2550 motors used in all the control algorithms
- */
 #include <Eigen/Dense>           // Include the Eigen library
 #include <cmath>
 #include <math.h>

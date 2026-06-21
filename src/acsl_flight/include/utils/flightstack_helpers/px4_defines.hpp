@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        px4_defines.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        September 11, 2024 \n 
+ * File:        px4_defines.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        September 11, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -35,13 +34,8 @@
  * GitHub:    https://github.com/andrealaffly/ACSL-flightstack-winged
  **********************************************************************************************************************/
 
-#ifndef _PX4_DEFINES_
-#define _PX4_DEFINES_
-
-/**
- * @file px4_defines.hpp
- * @brief Contains useful constant defines for use in the flight stack in a central location
- */
+#ifndef PX4_DEFINES_
+#define PX4_DEFINES_
 
 #include <cstdint>   // For uint8_t, uint16_t
 
@@ -86,4 +80,4 @@ inline constexpr uint8_t VELOCITY_FRAME_FRD      = 2; // FRD world-fixed frame, 
 inline constexpr uint8_t VELOCITY_FRAME_BODY_FRD = 3; // FRD body-fixed frame
 
 
-#endif // _PX4_DEFINES_
+#endif // PX4_DEFINES_

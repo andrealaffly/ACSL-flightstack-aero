@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,7 +21,7 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
  /**********************************************************************************************************************  
  * Part of the code in this file leverages the following material.
  *
@@ -43,9 +42,9 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        mocap.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 20, 2024 \n 
+ * File:        mocap.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 20, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -57,13 +56,8 @@
 #ifndef MOCAP_HPP_
 #define MOCAP_HPP_
 
-/**
- * @file mocap.hpp
- * @brief Class declaration for UDP socket as a lifecycle node.
- */
-
-#include "udp_driver.hpp"
-#include "control_config.hpp"                     // Include this for creating the logging file.
+#include "udp_driver.hpp"                         // Include for setting up the udp networking.
+#include "global_config.hpp"                      // Include this for the communication ip and port setup.
 #include "px4_defines.hpp"                        // Include for the PX4_define terms in a central location.            
 #include "global_helpers.hpp"                     // Include for the flightstack global functions
 
@@ -83,23 +77,6 @@
 #include "vehicle_class.hpp"
 #include "flight_log.hpp"
 
-#define TESTING false
-
-// -> IP of the Odroid M1s
-inline constexpr const char* GROUND_STATION_IP = "127.0.0.1"; // For testing 
-inline constexpr const char* ODROID_M1S_IP = "192.168.12.1";
-// -> PORT of the Odroid M1s
-inline constexpr uint16_t ODROID_M1S_PORT = 52000;
-
-// Block of code that decides if we are testing using the ground station or running the mocap on the ODroid.
-#if TESTING
-  // For testing with internal port on groundstation
-  inline constexpr const char* IP_IN_USE = GROUND_STATION_IP;
-#else
-  // For implementation with VICON and ODroid M1s
-  inline constexpr const char* IP_IN_USE = ODROID_M1S_IP;
-#endif
-
 namespace lc = rclcpp_lifecycle;
 namespace fl = _flight_log_;
 using LNI = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface;
@@ -113,10 +90,6 @@ namespace _udp_driver_
 {
 
 // Struct for mocap states that come over the udp.
-/**
- * @struct moacp_states
- * @brief Struct for mocap states that come over the udp.
- */
 struct mocap_states
 {
   double control_time;
@@ -135,8 +108,8 @@ struct mocap_states
   double yawspeed;
 };
 
-/// \brief UdpReceiverNode class which can receive UDP datagrams
-class UdpReceiverNode final
+/// \brief MocapUdpReceiverNode class which can receive UDP datagrams
+class MocapUdpReceiverNode final
   : public lc::LifecycleNode, public fl::blackbox
 {
 public:
@@ -144,10 +117,10 @@ public:
     /// \param[in] ctx A shared IoContext
     /// \param[in] pointer to vehicle states in flight_bridge
     /// \param[in] string to the global flight run directory
-    UdpReceiverNode(const IoContext & ctx, vehicle_states* d, const std::string & global_log_dir);
+    MocapUdpReceiverNode(const IoContext & ctx, vehicle_states* d, const std::string & global_log_dir);
 
     /// \brief Destructor - required to manage owned IoContext
-    ~UdpReceiverNode();
+    ~MocapUdpReceiverNode();
 
     /// \brief Callback from transition to "configuring" state.
     /// \param[in] state The current state that the node is in.
@@ -179,10 +152,10 @@ private:
     /// Pointer to the asio context owned by this node for async communication
     std::unique_ptr<IoContext> m_owned_ctx{};
     
-    /// String for the ip of the odrioid
+    /// String for the ip
     std::string m_ip{};
         
-    /// String for the port of the odroid
+    /// String for the port
     uint16_t m_port{};
     
     /// Pointer for the udp driver which wraps the udp socket
@@ -201,12 +174,12 @@ private:
     /// \brief Debugger function to output the mocap data.
     void debugMocapData2screen();
 
-    /// \brief Implementing virtual functions from blackbox
+    /// \brief Implementing virtual functions from blackbox.
     void logInitHeaders();
     bool logInitLogging();
     void logLogData();
 
-    /// \brief Directory for logging mocap data
+    /// \brief Directory for logging mocap data.
     std::string flight_run_log_directory;
 
 

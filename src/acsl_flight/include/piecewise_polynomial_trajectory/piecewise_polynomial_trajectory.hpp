@@ -1,4 +1,3 @@
-///@cond 
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,12 +21,12 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond 
+
 /***********************************************************************************************************************
- * File:        piecewise_polynomial_trajectory.hpp \n 
- * Author:      Mattia Gramuglia, Giri Mugundan Kumar \n 
- * Date:        June 27, 2024 \n 
- * For info:    Andrea L'Afflitto  
+ * File:        piecewise_polynomial_trajectory.hpp
+ * Author:      Mattia Gramuglia, Giri Mugundan Kumar
+ * Date:        June 27, 2024
+ * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
  * Description: Header file for piecewise polynomial trajectory. The code
@@ -41,11 +40,6 @@
 #ifndef PIECEWISE_POLYNOMIAL_TRAJECTORY_HPP_
 #define PIECEWISE_POLYNOMIAL_TRAJECTORY_HPP_
 
-/**
- * @file piecewise_polynomial_trajectory.hpp
- * @brief Header file for piecewise polynomial trajectory.
- */
-
 #include "user_defined_trajectory_base.hpp" // Include for the base trajectory class
 #include "flight_params.hpp"                // Include for the flight params
 #include "global_helpers.hpp"               // Include for the flightstack global functions
@@ -57,10 +51,6 @@ using namespace _flightstack_;
 
 namespace _piecewise_polynomial_trajectory_{
 
-/**
- * @class piecewise_polynomial_trajectory
- * @brief Piecwise polynomial trajectory
- */
 class piecewise_polynomial_trajectory : public trajectory_base
 {
     public:
@@ -68,11 +58,6 @@ class piecewise_polynomial_trajectory : public trajectory_base
         piecewise_polynomial_trajectory(flight_params* p);
 
         // Function to update the user defined trajectory according to the controller time
-        /**
-         * @brief Function to update the user defined trajectory according to the controller time
-         * 
-         * @param controller_time 
-         */
         void updateUserDefinedTrajectory(double controller_time);
 
     private: 
@@ -82,48 +67,17 @@ class piecewise_polynomial_trajectory : public trajectory_base
 
         // Function that updates the user-defined yaw, yaw_dot, and yaw_dot_dot based on the time at which 
         // it is requested to be evaluated
-        /**
-         * @brief Function that updates the user-defined yaw, yaw_dot, and yaw_dot_dot based on the time at which it is requested to be evaulated
-         * @param None
-         */
         void updateUserDefinedYaw();
 
         // Compute the user-defined yaw from the trajectory velocity in the XY plane
-        /**
-         * @brief Compute the user-defined yaw from the trajectory velocity in the XY plane
-         * @param Vx_coef 
-         * @param Vy_coef 
-         * @param t 
-         * @return double 
-         */
         double yawComputation(const VectorXd& Vx_coef, const VectorXd& Vy_coef, double t);
 
         // Compute the user-defined yaw_dot from the trajectory velocity in the XY plane
-        /**
-         * @brief Compute the user-defined yaw_dot from the trajectory velocity in the XY plane
-         * @param Vx_coef 
-         * @param Vy_coef 
-         * @param Ax_coef 
-         * @param Ay_coef 
-         * @param t 
-         * @return double 
-         */
         double yawDotComputation(const VectorXd& Vx_coef, const VectorXd& Vy_coef,
                                  const VectorXd& Ax_coef, const VectorXd& Ay_coef, 
                                  double t);
 
         // Compute the user-defined yaw_dot_dot from the trajectory velocity in the XY plane
-        /**
-         * @brief Compute the user-defined yaw_dot_dot from the trajectory velocity in the XY plane
-         * @param Vx_coef 
-         * @param Vy_coef 
-         * @param Ax_coef 
-         * @param Ay_coef 
-         * @param Jx_coef 
-         * @param Jy_coef 
-         * @param t 
-         * @return double 
-         */
         double yawDotDotComputation(const VectorXd& Vx_coef, const VectorXd& Vy_coef,
                                     const VectorXd& Ax_coef, const VectorXd& Ay_coef,
                                     const VectorXd& Jx_coef, const VectorXd& Jy_coef,
@@ -131,10 +85,6 @@ class piecewise_polynomial_trajectory : public trajectory_base
 
 
         // Function to extract and set the polynomial coefficient matrices
-        /**
-         * @brief Set the Polynomial Coefficient Matrices object
-         * @param None
-         */
         void setPolynomialCoefficientMatrices();
 
         // Function to adjust the time to be fed to the various polynomials and identify the segment of the trajectory
@@ -176,9 +126,6 @@ class piecewise_polynomial_trajectory : public trajectory_base
         MatrixXd jerk_coef_z_;
 
         // Position polynomial coefficients for LANDING from (X, Y, -1) to (X, Y, 0) in 4 seconds
-        /**
-         * @brief Position polynomial coefficients for LANDING from (X, Y, -1) to (X, Y, 0) in 4 seconds
-         */
         const VectorXd landing_position_coef_z_ = (VectorXd(8) << 
             -0.001220703125,
              0.01708984375,

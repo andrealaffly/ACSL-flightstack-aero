@@ -1,4 +1,3 @@
-///@cond
 /***********************************************************************************************************************
  * Copyright (c) 2024 Giri M. Kumar, Mattia Gramuglia, Andrea L'Afflitto. All rights reserved.
  * 
@@ -22,11 +21,11 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **********************************************************************************************************************/
-///@endcond
+
 /***********************************************************************************************************************
- * File:        read_pix.hpp \n 
- * Author:      Giri Mugundan Kumar \n 
- * Date:        April 12, 2024 \n 
+ * File:        read_pix.hpp
+ * Author:      Giri Mugundan Kumar
+ * Date:        April 12, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
@@ -37,11 +36,6 @@
 
 #ifndef READ_PIX_HPP_
 #define READ_PIX_HPP_
-
-/**
- * @file read_pix.hpp
- * @brief Class decleartion for reading pixhawk data
- */
 
 #include <chrono>
 #include <memory>
@@ -66,13 +60,20 @@ namespace _read_pix_
 {
 
 /***********************************************************************************************/
+/*                               READ ODOMETRY MACHINE STATE                                   */
+/***********************************************************************************************/
+// Definition for the state of the Read Odometry class
+enum class ReadMachineState : uint8_t {
+  IDLE                       = 0b000,   // Default State, the state machine is idle
+  ACQUIRE_POS_YAW_CORRECTION = 0b011,   // The state machine is acquiring position and yaw correction data
+  ACQUIRE_POS_CORRECTION     = 0b010,   // The state machine is acquiring position correction data    
+  ZERO_POS_YAW_CORRECTION    = 0b111,   // The state machine is correcting for position and yaw data 
+  ZERO_POS_CORRECTION        = 0b110    // The state machine is correcting for position data
+};
+
+/***********************************************************************************************/
 /*                                  READ ODOMETRY CLASS                                        */
 /***********************************************************************************************/
-
-/**
- * @class read_odometryNode
- * @brief READ ODOMETRY CLASS
- */
 class read_odometryNode : public rclcpp::Node
 {
 public:
@@ -87,10 +88,6 @@ private:
   rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr odometry_subscription_;
 
   /// Odometry callback function to process and save data to vehicle obejct in flight_bridge.cpp
-  /**
-   * @brief Odometry callback function to process and save data to vehicle obejct in flight_bridge.cpp
-   * @param msg
-   */
   void odometry_callback_(const px4_msgs::msg::VehicleOdometry::UniquePtr msg);
 
   /// Instance of the vehicle_ptr to point to the vehicle state object in
@@ -104,25 +101,39 @@ private:
   // Prototype function for calculating the euler angles from quaternions
   std::array<double, 3> quaternionToEulerAnglesRPY(double q0, double q1, double q2, double q3);
 
-  // Private variable for initial vehicle state.
-  /**
-   * @struct init_state
-   * @brief Private variable for initial vehicle state.
-   */
-  struct init_state
+  // Private structure that defines the statemachine and the correction values.
+  // This defines if there is a requirement for zeroing the yaw and the position 
+  // data (While we run MOCAP and VIO) or just zeroing the position alone (while we run RTK).
+  struct StateMachine
   {
-    bool init = false;
+    // Boolean for zeroing the values
+    bool zeroYaw = false;         // Start with the default value of false - The yaw value has not been zeroed.
+    bool zeroPos = false;         // Start with the default value of false - The poisition value has not been zeroed.    
+    bool zeroAcq = false;         // Start with the default value of false - The correcion data has not been acquired.
+
+    // Internal structure function that provides the state the read odometry state machine is in
+    ReadMachineState getState() const {
+      return static_cast<ReadMachineState>(
+        (static_cast<uint8_t>(zeroAcq) << 2) | 
+        (static_cast<uint8_t>(zeroPos) << 1) |
+        (static_cast<uint8_t>(zeroYaw)));
+    }
+
+
+    // Member variables for caching the correction data for the readings.
+    struct Corrections
+    {
+      double x = 0.0;                     // position along x-axis in I - NED earth-fixed frame [m]
+      double y = 0.0;                     // position along y-axis in I - NED earth-fixed frame [m]
+      double z = 0.0;                     // position along z-axis in I - NED earth-fixed frame [m]
+      std::array<double, 3> EulerRPY;     // Euler Roll Pitch Yaw for computation
+      double roll = 0.0;                  // Euler Roll  [rad]
+      double pitch = 0.0;                 // Euler Pitch [rad]
+      double yaw = 0.0;                   // Euler Yaw   [rad]
+      Quaterniond yaw_quaternion;         // Quaternion offset in yaw in I - NED earth-fixed frame [-]
+    } corrections;
     
-    // Member variables
-    double x = 0.0;                     // position along x-axis in I - NED earth-fixed frame [m]
-    double y = 0.0;                     // position along y-axis in I - NED earth-fixed frame [m]
-    double z = 0.0;                     // position along z-axis in I - NED earth-fixed frame [m]
-    std::array<double, 3> EulerRPY;     // Euler Roll Pitch Yaw for computation
-    double roll = 0.0;                  // Euler Roll  [rad]
-    double pitch = 0.0;                 // Euler Pitch [rad]
-    double yaw = 0.0;                   // Euler Yaw   [rad]
-    Quaterniond yaw_quaternion;         // Quaternion offset in yaw in I - NED earth-fixed frame [-]
-  } initvals; 
+  } stateMachine; 
 
   // Raw quaternion data from the  for computation
   Quaterniond quaternion_pix;
