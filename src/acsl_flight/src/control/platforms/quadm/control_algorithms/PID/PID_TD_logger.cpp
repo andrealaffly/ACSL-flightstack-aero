@@ -36,16 +36,20 @@
  **********************************************************************************************************************/
 
 /*               _           _      _                      
- _ __ ___  ___| |_ ___ ___| |_ __| |_ __ ___  _ __   ___ 
-| '__/ _ \/ __| __/ _ / __| __/ _` | '__/ _ \| '_ \ / _ \
-| | | (_) \__ | ||  __\__ | || (_| | | | (_) | | | |  __/
-|_|  \___/|___/\__\___|___/\__\__,_|_|  \___/|_| |_|\___|
-                                                         
+ $$$$$$\  $$\   $$\  $$$$$$\  $$$$$$$\  $$\      $$\ 
+$$  __$$\ $$ |  $$ |$$  __$$\ $$  __$$\ $$$\    $$$ |
+$$ /  $$ |$$ |  $$ |$$ /  $$ |$$ |  $$ |$$$$\  $$$$ |
+$$ |  $$ |$$ |  $$ |$$$$$$$$ |$$ |  $$ |$$\$$\$$ $$ |
+$$ |  $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ \$$$  $$ |
+$$ $$\$$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |\$  /$$ |
+\$$$$$$ / \$$$$$$  |$$ |  $$ |$$$$$$$  |$$ | \_/ $$ |
+ \___$$$\  \______/ \__|  \__|\_______/ \__|     \__|
+     \___|                                           
 */
 
 #include <PID_TD_logger.hpp>
 
-namespace _rostestdrone_{
+namespace _quadm_{
 namespace _pid_{
 
 pid_logger::pid_logger(controller_internal_members* cim, controller_integrated_state_members* csm, 
@@ -206,7 +210,7 @@ bool pid_logger::logInitLogging() {
         }
 
         // Copy the gains parameters over
-        std::string gains_source_file = "./src/acsl_flight/params/control_algorithms/rostestdrone/PID/gains_PID.json";
+        std::string gains_source_file = "./src/acsl_flight/params/control_algorithms/quadm/PID/gains_PID.json";
         std::stringstream gains_target_ss;
         gains_target_ss << flight_run_controller_specific_parameter_directory << "/gains_PID.json" ;
         std::string gains_target_file = gains_target_ss.str();
@@ -308,4 +312,4 @@ void pid_logger::logLogData() {
 }
 
 } // namespace _pid_
-} // namespace _rostestdrone_
+} // namespace _quadm_

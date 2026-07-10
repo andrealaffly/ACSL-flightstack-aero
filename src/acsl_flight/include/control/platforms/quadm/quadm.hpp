@@ -23,34 +23,38 @@
  **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * File:        rostestdrone.hpp
+ * File:        quadm.hpp
  * Author:      Giri Mugundan Kumar
  * Date:        July 10, 2024
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: Vehicle Information of the rostestdrone with the T-Motor
+ * Description: Vehicle Information of the quadm with the T-Motor
  *              P2305 kv2550 motors used in all the control algorithms
  * 
  * GitHub:    https://github.com/girimugundankumar/acsl-flight-stack.git
  **********************************************************************************************************************/
 
 /*               _           _      _                      
- _ __ ___  ___| |_ ___ ___| |_ __| |_ __ ___  _ __   ___ 
-| '__/ _ \/ __| __/ _ / __| __/ _` | '__/ _ \| '_ \ / _ \
-| | | (_) \__ | ||  __\__ | || (_| | | | (_) | | | |  __/
-|_|  \___/|___/\__\___|___/\__\__,_|_|  \___/|_| |_|\___|
-                                                         
+ $$$$$$\  $$\   $$\  $$$$$$\  $$$$$$$\  $$\      $$\ 
+$$  __$$\ $$ |  $$ |$$  __$$\ $$  __$$\ $$$\    $$$ |
+$$ /  $$ |$$ |  $$ |$$ /  $$ |$$ |  $$ |$$$$\  $$$$ |
+$$ |  $$ |$$ |  $$ |$$$$$$$$ |$$ |  $$ |$$\$$\$$ $$ |
+$$ |  $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ \$$$  $$ |
+$$ $$\$$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |\$  /$$ |
+\$$$$$$ / \$$$$$$  |$$ |  $$ |$$$$$$$  |$$ | \_/ $$ |
+ \___$$$\  \______/ \__|  \__|\_______/ \__|     \__|
+     \___|                                           
 */
 
-#ifndef ROSTESTDRONE_HPP_
-#define ROSTESTDRONE_HPP_
+#ifndef QUADM_HPP_
+#define QUADM_HPP_
 
 #include <Eigen/Dense>           // Include the Eigen library
 #include <cmath>
 #include <math.h>
 
-namespace _rostestdrone_{
+namespace _quadm_{
         
     // Constants
     inline constexpr double G = 9.81;
@@ -61,17 +65,18 @@ namespace _rostestdrone_{
     inline constexpr double RAD2DEG = (180/PI);
 
     // Vehicle and Environment Defines
-    inline constexpr double MASS = 0.970;                                    // mass of vehicle                [Kg]                                      
-    inline constexpr double LX = 0.097509;                                   // dist to motor along x^J         [m]
-    inline constexpr double LY = 0.110688;                                   // dist to motor along y^J         [m]
+    inline constexpr double MASS = 1.05748;                                  // mass of vehicle                      [Kg]                                      
+    inline constexpr double LX = 0.0954;                                     // dist to motor along x^J              [m]
+    inline constexpr double LY = 0.01107;                                    // dist to motor along y^J              [m]
 
     // Thrust Normalizeing polynomials are hardcoded!
     // Take care coding this from matlab. check the documentation for the polyval function.
     // The polynomails are reversed!.
-    inline constexpr double CT_MOTOR =  0.01;                                      // motor torque coeff              [-]
-    inline constexpr double MAX_THRUST = 9.5;                                      // max allowed thrust per motor    [N]
+    inline constexpr double CT_MOTOR =  0.19972;                                   // motor torque coeff              [-]
+    inline constexpr double MAX_THRUST = 10;                                       // max allowed thrust per motor    [N]
     inline constexpr double MIN_THRUST = 0.3;                                      // min allowed thrust per motor    [N]
 
+    // Roll Rate Filter ------------------------------------------------------------------------------------------------
     // A matrix of the roll_ref filter
     const Eigen::Matrix2d A_filter_roll_ref = (Eigen::Matrix2d() << 
                                                     -54.0, -2025.0, 
@@ -87,6 +92,7 @@ namespace _rostestdrone_{
     // D matrix of the roll_ref filter
     const double D_filter_roll_ref = 0.0; 
 
+    // Pitch Rate Filter -----------------------------------------------------------------------------------------------
     // A matrix of the pitch_ref filter
     const Eigen::Matrix2d A_filter_pitch_ref = (Eigen::Matrix2d() << 
                                                     -54.0, -2025.0, 
@@ -102,6 +108,7 @@ namespace _rostestdrone_{
     // D matrix of the pitch_ref filter
     const double D_filter_pitch_ref = 0.0; 
 
+    // Roll Acceleration Filter ----------------------------------------------------------------------------------------
     // A matrix of the roll_ref filter
     const Eigen::Matrix2d A_filter_roll_dot_ref = (Eigen::Matrix2d() << 
                                                     -50.0, -2500.0, 
@@ -117,6 +124,7 @@ namespace _rostestdrone_{
     // D matrix of the roll_ref filter
     const double D_filter_roll_dot_ref = 0.0; 
 
+    // Pitch Acceleration Filter ---------------------------------------------------------------------------------------
     // A matrix of the pitch_ref filter
     const Eigen::Matrix2d A_filter_pitch_dot_ref = (Eigen::Matrix2d() << 
                                                     -50.0, -2500.0, 
@@ -135,14 +143,14 @@ namespace _rostestdrone_{
     // Polynomial coefficients vector to evaluate the Commanded Thrust [-] based on the Thrust in Newton
     // TMotor F35A - Velox V2808 Kv1300
     const Eigen::VectorXd thrust_polynomial_coeff_qrbp = (Eigen::VectorXd(8) << 
-                                                            0.00000318912344541255,
-                                                             -0.000107583270223678,
-                                                               0.00147671457913486,
-                                                               -0.0107666934546496,
-                                                                0.0459838527842087,
-                                                                -0.121504752465409,
-                                                                 0.285725583084306,
-                                                               -0.0118110779377008
+                                                           1.1397548468561201E-5,
+                                                          -0.00038436172518955446,
+                                                           0.0051947365478567029,
+                                                          -0.036003519831726248,
+                                                           0.13652913911293302,
+                                                          -0.2857385586886379,
+                                                           0.40625173135017634,
+                                                          -0.0586576952028257
                                                         ).finished();
 
     // Weight vector of the qrbp
@@ -188,11 +196,10 @@ namespace _rostestdrone_{
     // [kg*m^2] inertia matrix of the vehicle system (drone frame + box + propellers) expressed in
     // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
     const Eigen::Matrix3d inertia_matrix_q = (Eigen::Matrix3d() << 
-                                                0.00394755, -0.00000472, 0.00030746,
-                                                -0.00000472,  0.00444911, 0.00000207,
-                                                0.00030746,  0.00000207, 0.00722994
-                                             ).finished(); 
+                                                0.00373978,	0.00000409, 0.00001103,
+                                                0.00000409,	0.00422375,	0.00000086,
+                                                0.00001103,	0.00000086,	0.00635708).finished();                                             
 
-} // namespace _rostestdrone_
+} // namespace _quadm_
 
-#endif  // ROSTESTDRONE_HPP_
+#endif  // QUADM_HPP_

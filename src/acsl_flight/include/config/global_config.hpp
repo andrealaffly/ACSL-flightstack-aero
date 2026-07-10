@@ -62,7 +62,7 @@ inline constexpr uint16_t WEATHER_PORT = 53000; // <-- Confirm this matches the 
 */
 // Define named constants for controller types
 #define __QRBP__ 1
-#define __ROSTESTDRONE__ 2
+#define __QUADM__ 2
 
 /*********************************************************************************************************************
   CONTROLLER selection
@@ -128,18 +128,18 @@ inline constexpr uint16_t WEATHER_PORT = 53000; // <-- Confirm this matches the 
 
     #endif
 
-#elif SELECTED_PLATFORM == __ROSTESTDRONE__
+#elif SELECTED_PLATFORM == __QUADM__
 
     // Define the platform of choice for sending to the mocap file.
     // This directory name should be used in the logger for all your controllers! - DO NOT FORGET
-    constexpr const char* platform_of_choice = "rostestdrone";
+    constexpr const char* platform_of_choice = "quadm";
 
     // Define ControlType based on SELECTED_CONTROLLER using type aliasing
     #if SELECTED_CONTROLLER == __PID__ 
 
         #include "PID_TD.hpp"
         // Remember the class name you used in control_algorithms
-        using _picked_controller_ = _rostestdrone_::_pid_::pid;    
+        using _picked_controller_ = _quadm_::_pid_::pid;    
 
     #else 
 

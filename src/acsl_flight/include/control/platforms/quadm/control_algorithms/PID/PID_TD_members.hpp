@@ -35,11 +35,15 @@
  **********************************************************************************************************************/
 
 /*               _           _      _                      
- _ __ ___  ___| |_ ___ ___| |_ __| |_ __ ___  _ __   ___ 
-| '__/ _ \/ __| __/ _ / __| __/ _` | '__/ _ \| '_ \ / _ \
-| | | (_) \__ | ||  __\__ | || (_| | | | (_) | | | |  __/
-|_|  \___/|___/\__\___|___/\__\__,_|_|  \___/|_| |_|\___|
-                                                         
+ $$$$$$\  $$\   $$\  $$$$$$\  $$$$$$$\  $$\      $$\ 
+$$  __$$\ $$ |  $$ |$$  __$$\ $$  __$$\ $$$\    $$$ |
+$$ /  $$ |$$ |  $$ |$$ /  $$ |$$ |  $$ |$$$$\  $$$$ |
+$$ |  $$ |$$ |  $$ |$$$$$$$$ |$$ |  $$ |$$\$$\$$ $$ |
+$$ |  $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ \$$$  $$ |
+$$ $$\$$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |\$  /$$ |
+\$$$$$$ / \$$$$$$  |$$ |  $$ |$$$$$$$  |$$ | \_/ $$ |
+ \___$$$\  \______/ \__|  \__|\_______/ \__|     \__|
+     \___|                                           
 */
 
 #ifndef CONTROLLERS_PID_TD_MEMBERS_HPP_
@@ -47,10 +51,10 @@
 
 #include "Eigen/Dense"
 #include <chrono>
-#include "rostestdrone.hpp"           // Header file for vehicle specific information and some other functions
+#include "quadm.hpp"           // Header file for vehicle specific information and some other functions
 
 using namespace Eigen;
-namespace _rostestdrone_{
+namespace _quadm_{
 namespace _pid_{
 
 // Structure for all parameter members of the controller
@@ -192,6 +196,6 @@ struct controller_internal_members
 };
 
 } // namespace _pid_
-} // namespace _rostestdrone_
+} // namespace _quadm_
 
 #endif // CONTROLLERS_PID_TD_MEMBERS_HPP_

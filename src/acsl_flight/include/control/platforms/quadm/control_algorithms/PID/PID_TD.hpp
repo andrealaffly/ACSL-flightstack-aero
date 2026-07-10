@@ -37,17 +37,21 @@
  **********************************************************************************************************************/
 
 /*               _           _      _                      
- _ __ ___  ___| |_ ___ ___| |_ __| |_ __ ___  _ __   ___ 
-| '__/ _ \/ __| __/ _ / __| __/ _` | '__/ _ \| '_ \ / _ \
-| | | (_) \__ | ||  __\__ | || (_| | | | (_) | | | |  __/
-|_|  \___/|___/\__\___|___/\__\__,_|_|  \___/|_| |_|\___|
-                                                         
+ $$$$$$\  $$\   $$\  $$$$$$\  $$$$$$$\  $$\      $$\ 
+$$  __$$\ $$ |  $$ |$$  __$$\ $$  __$$\ $$$\    $$$ |
+$$ /  $$ |$$ |  $$ |$$ /  $$ |$$ |  $$ |$$$$\  $$$$ |
+$$ |  $$ |$$ |  $$ |$$$$$$$$ |$$ |  $$ |$$\$$\$$ $$ |
+$$ |  $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ \$$$  $$ |
+$$ $$\$$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |\$  /$$ |
+\$$$$$$ / \$$$$$$  |$$ |  $$ |$$$$$$$  |$$ | \_/ $$ |
+ \___$$$\  \______/ \__|  \__|\_______/ \__|     \__|
+     \___|                                           
 */
 
 #ifndef CONTROLLERS_PID_TD_HPP_
 #define CONTROLLERS_PID_TD_HPP_
 
-#include "rostestdrone.hpp"           // Header file for vehicle specific information and some other functions
+#include "quadm.hpp"           // Header file for vehicle specific information and some other functions
 #include "control_algorithm_base.hpp" // Include for the base class for the basis of control algorithms
 #include "PID_TD_members.hpp"         // Include for all the members of the PID class
 #include "PID_TD_logger.hpp"          // Include for the logging.
@@ -57,7 +61,7 @@
 using namespace _control_algorithm_base_;
 using namespace _piecewise_polynomial_trajectory_;
 
-namespace _rostestdrone_{
+namespace _quadm_{
 namespace _pid_{
 
 // class pid : public controller_base, public blackbox 
@@ -156,6 +160,6 @@ class pid : public controller_base
 };
 
 } // namespace _pid_
-} // namespace _rostestdrone_
+} // namespace _quadm_
 
 #endif  // CONTROLLERS_PID_TD_HPP_

@@ -92,8 +92,9 @@ include_directories(${Boost_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/PID_OMEGA/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/MRAC_OMEGA/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/MRAC_OBSERVER/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/rostestdrone/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/rostestdrone/control_algorithms/PID/)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/quadm/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/quadm/control_algorithms/PID/
+                  )
 
 # add source files
 set(SOURCES
@@ -121,9 +122,9 @@ set(SOURCES
   src/control/platforms/qrbp/control_algorithms/MRAC_OBSERVER/MRAC_OBSERVER_logger.cpp
   src/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID.cpp
   src/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID_logger.cpp
-  src/control/platforms/rostestdrone/control_algorithms/PID/PID_TD.cpp
-  src/control/platforms/rostestdrone/control_algorithms/PID/PID_TD_logger.cpp
-  )
+  src/control/platforms/quadm/control_algorithms/PID/PID_TD.cpp
+  src/control/platforms/quadm/control_algorithms/PID/PID_TD_logger.cpp
+)
 
 # add executable
 add_executable(start ${SOURCES})

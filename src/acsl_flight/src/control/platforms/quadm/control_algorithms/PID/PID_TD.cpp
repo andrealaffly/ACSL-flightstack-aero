@@ -29,7 +29,7 @@
  * For info:    Andrea L'Afflitto 
  *              a.lafflitto@vt.edu
  * 
- * Description: PID for the rostestdrone. Inherts the class controller_base
+ * Description: PID for the quadm. Inherts the class controller_base
  *              for the basic functionality that is to be used for all 
  *              control algorithms.
  * 
@@ -37,16 +37,20 @@
  **********************************************************************************************************************/
 
 /*               _           _      _                      
- _ __ ___  ___| |_ ___ ___| |_ __| |_ __ ___  _ __   ___ 
-| '__/ _ \/ __| __/ _ / __| __/ _` | '__/ _ \| '_ \ / _ \
-| | | (_) \__ | ||  __\__ | || (_| | | | (_) | | | |  __/
-|_|  \___/|___/\__\___|___/\__\__,_|_|  \___/|_| |_|\___|
-                                                         
+ $$$$$$\  $$\   $$\  $$$$$$\  $$$$$$$\  $$\      $$\ 
+$$  __$$\ $$ |  $$ |$$  __$$\ $$  __$$\ $$$\    $$$ |
+$$ /  $$ |$$ |  $$ |$$ /  $$ |$$ |  $$ |$$$$\  $$$$ |
+$$ |  $$ |$$ |  $$ |$$$$$$$$ |$$ |  $$ |$$\$$\$$ $$ |
+$$ |  $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ \$$$  $$ |
+$$ $$\$$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |\$  /$$ |
+\$$$$$$ / \$$$$$$  |$$ |  $$ |$$$$$$$  |$$ | \_/ $$ |
+ \___$$$\  \______/ \__|  \__|\_______/ \__|     \__|
+     \___|                                           
 */
 
 #include "PID_TD.hpp"
 
-namespace _rostestdrone_{
+namespace _quadm_{
 namespace _pid_{
 
 // Constructor - Take care to initialize the logger
@@ -54,7 +58,7 @@ pid::pid(flight_params* p, const std::string & controller_log_dir_) :
      controller_base(p), ud(p), logger(&cim, &csm, &control_input, controller_log_dir_) {
     
     // Reading in the parameters
-    read_params("./src/acsl_flight/params/control_algorithms/rostestdrone/PID/gains_PID.json");
+    read_params("./src/acsl_flight/params/control_algorithms/quadm/PID/gains_PID.json");
 
     // Initial Conditions
     init();    
@@ -353,4 +357,4 @@ float pid::get_t8() const {
 
 
 } // namespace _pid_
-} // namespace _rostestdrone_
+} // namespace _quadm_

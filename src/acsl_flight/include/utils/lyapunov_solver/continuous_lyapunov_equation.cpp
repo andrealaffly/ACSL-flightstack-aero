@@ -131,7 +131,7 @@ namespace _lyapunov_solver_{
         }
         // Reducing Q to upper triangular form.
         MatrixXd Q_upper{Q};
-        Q_upper(1, 0) = NAN;
+        Q_upper(1, 0) = std::numeric_limits<double>::quiet_NaN();
         return internal::Solve2By2RealContinuousLyapunovEquation(A, Q_upper);
     }
     VectorXcd eig_val{A.eigenvalues()};
@@ -154,8 +154,8 @@ namespace _lyapunov_solver_{
         throw std::runtime_error(
             "RealContinuousLyapunovEquation(): Schur factorization failed.");
     }
-    // Reduce the symmetric Q̅ to its upper triangular form Q̅_ᵤₚₚₑᵣ.
-    MatrixXd Q_bar_upper{MatrixXd::Constant(Q.rows(), Q.cols(), NAN)};
+    // Reduce the symmetric Q̅ to its upper triangular form Q̅_upper.
+    MatrixXd Q_bar_upper{MatrixXd::Constant(Q.rows(), Q.cols(), std::numeric_limits<double>::quiet_NaN())};
     Q_bar_upper.triangularView<Eigen::Upper>() = U.transpose() * Q * U;
     return (U *
             internal::SolveReducedRealContinuousLyapunovEquation(S, Q_bar_upper) *
