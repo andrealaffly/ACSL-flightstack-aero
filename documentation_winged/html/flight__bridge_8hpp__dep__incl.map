@@ -1,8 +1,0 @@
-<map id="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/flight_bridge/flight_bridge.hpp" name="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/flight_bridge/flight_bridge.hpp">
-<area shape="rect" id="node1" title="Utilities for multithreading." alt="" coords="97,5,317,61"/>
-<area shape="rect" id="node2" href="$control_8hpp.html" title="Class declaration for computing and publishing the control." alt="" coords="9,109,189,165"/>
-<area shape="rect" id="node4" href="$flight__main_8hpp.html" title="Header file for the main function that just sources all the other header files." alt="" coords="213,109,417,165"/>
-<area shape="rect" id="node6" href="$flight__bridge_8cpp.html" title="Utlities for multithreading." alt="" coords="441,109,623,165"/>
-<area shape="rect" id="node3" href="$control_8cpp.html" title="Control node definition. Runs all the control algorithms. Adds as a hub for all the control actions." alt="" coords="5,213,192,269"/>
-<area shape="rect" id="node5" href="$flight__main_8cpp.html" title="Main function to initiate ROS2." alt="" coords="225,213,405,269"/>
-</map>

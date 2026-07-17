@@ -1,6 +1,0 @@
-<map id="_rostestdrone_::_pid_::pid_logger" name="_rostestdrone_::_pid_::pid_logger">
-<area shape="rect" id="node1" title="Class to log PID." alt="" coords="260,63,413,105"/>
-<area shape="rect" id="node2" href="$class__flight__log___1_1blackbox.html" title=" " alt="" coords="11,5,173,32"/>
-<area shape="rect" id="node3" href="$struct__rostestdrone___1_1__pid___1_1controller__integrated__state__members.html" title="Structure for the members that are mapped to the rk4 vector after integration." alt="" coords="5,56,179,112"/>
-<area shape="rect" id="node4" href="$struct__rostestdrone___1_1__pid___1_1controller__internal__members.html" title="Structure for the internal members of the class." alt="" coords="14,136,170,192"/>
-</map>

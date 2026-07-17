@@ -1,6 +1,0 @@
-<map id="_flight_bridge_::flight_bridge" name="_flight_bridge_::flight_bridge">
-<area shape="rect" id="node1" title="flight_bridge class" alt="" coords="39,184,197,225"/>
-<area shape="rect" id="node2" href="$classvehicle__states.html" title="vehicle state class" alt="" coords="5,95,121,121"/>
-<area shape="rect" id="node3" href="$structflight__params.html" title="If you are adding more parameters to your flight in /src/acsl_flight/params/flight_params...." alt="" coords="145,95,256,121"/>
-<area shape="rect" id="node4" href="$structPiecewisePolynomialTrajectoryInfo.html" title="Struct containing the trajectory info coming from the .json file." alt="" coords="76,5,325,32"/>
-</map>

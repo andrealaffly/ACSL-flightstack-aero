@@ -1,9 +1,0 @@
-<map id="_piecewise_polynomial_trajectory_::piecewise_polynomial_trajectory" name="_piecewise_polynomial_trajectory_::piecewise_polynomial_trajectory">
-<area shape="rect" id="node1" title="Piecwise polynomial trajectory." alt="" coords="779,160,953,216"/>
-<area shape="rect" id="node2" href="$class__user__defined__trajectory__base___1_1trajectory__base.html" title="base trajectory for pixhawk" alt="" coords="408,93,591,134"/>
-<area shape="rect" id="node3" title=" " alt="" coords="91,92,169,119"/>
-<area shape="rect" id="node4" title=" " alt="" coords="459,175,539,201"/>
-<area shape="rect" id="node5" title=" " alt="" coords="459,469,540,496"/>
-<area shape="rect" id="node6" href="$structflight__params.html" title="If you are adding more parameters to your flight in /src/acsl_flight/params/flight_params...." alt="" coords="444,520,555,547"/>
-<area shape="rect" id="node7" href="$structPiecewisePolynomialTrajectoryInfo.html" title="Struct containing the trajectory info coming from the .json file." alt="" coords="5,520,255,547"/>
-</map>

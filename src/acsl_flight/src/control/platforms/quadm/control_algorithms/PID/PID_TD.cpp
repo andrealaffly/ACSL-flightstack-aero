@@ -271,7 +271,7 @@ void pid::compute_rotational_control()
 void pid::compute_normalized_thrusts()
 {
     // Compute the individual thrusts in Newtons
-    cim.Thrust << mixer_matrix_qrbp * cim.u;
+    cim.Thrust << mixer_matrix_quadm * cim.u;
 
     // Saturate each element of the Thrust vector between MIN_THRUST and MAX_THRUST
     cim.Sat_Thrust = (cim.Thrust.cwiseMin(MAX_THRUST).cwiseMax(MIN_THRUST));

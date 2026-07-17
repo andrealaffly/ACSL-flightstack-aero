@@ -1,6 +1,0 @@
-<map id="_qrbp_::_mrac_pid_::controller_internal_members_aero" name="_qrbp_::_mrac_pid_::controller_internal_members_aero">
-<area shape="rect" id="node1" title="Structure for all the aerodynamic members of the controller." alt="" coords="168,95,317,151"/>
-<area shape="rect" id="node2" href="$struct__qrbp___1_1AeroStates.html" title="Angles for the wings and stabilizers." alt="" coords="5,5,149,32"/>
-<area shape="rect" id="node3" href="$struct__qrbp___1_1AeroCoeff.html" title="Aerodynamic coefficients for the QRBP." alt="" coords="174,5,311,32"/>
-<area shape="rect" id="node4" href="$struct__qrbp___1_1AeroDynamicMembers.html" title="Structre for all the aerodynamic members of the controller." alt="" coords="335,5,558,32"/>
-</map>

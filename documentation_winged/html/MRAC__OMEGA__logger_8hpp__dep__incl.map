@@ -1,6 +1,0 @@
-<map id="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/control/platforms/qrbp/control_algorithms/MRAC_OMEGA/MRAC_OMEGA_logger.hpp" name="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/control/platforms/qrbp/control_algorithms/MRAC_OMEGA/MRAC_OMEGA_logger.hpp">
-<area shape="rect" id="node1" title="logging for the MRAc with angular velocities controller" alt="" coords="141,5,393,91"/>
-<area shape="rect" id="node2" href="$MRAC__OMEGA_8hpp.html" title="MRAC with angular velocities for the QRBP." alt="" coords="27,139,232,224"/>
-<area shape="rect" id="node4" href="$MRAC__OMEGA__logger_8cpp.html" title="logging for the MRAC with angular velocities controller." alt="" coords="257,146,551,217"/>
-<area shape="rect" id="node3" href="$MRAC__OMEGA_8cpp.html" title="MRAC with angular velocities for the QRBP. Inherts the class controller_base for the basic functional..." alt="" coords="5,272,253,343"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID_members.hpp" name="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID_members.hpp">
-<area shape="rect" id="node1" title="MRAC_PID controller class members." alt="" coords="87,5,307,91"/>
-<area shape="rect" id="node2" href="$MRAC__PID_8hpp.html" title="MRAC_PID for the QRBP." alt="" coords="34,272,225,357"/>
-<area shape="rect" id="node4" href="$MRAC__PID__logger_8hpp.html" title="logging for the MRAC_PID controller." alt="" coords="166,139,365,224"/>
-<area shape="rect" id="node3" href="$MRAC__PID_8cpp.html" title="MRAC_PID for the QRBP." alt="" coords="5,405,253,476"/>
-<area shape="rect" id="node5" href="$MRAC__PID__logger_8cpp.html" title="logging for the MRAC_PID controller. Inherits the Blackbox class for logging and takes in the interna..." alt="" coords="249,279,497,350"/>
-</map>

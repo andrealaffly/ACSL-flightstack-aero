@@ -1,8 +1,0 @@
-<map id="_read_pix_::read_odometryNode" name="_read_pix_::read_odometryNode">
-<area shape="rect" id="node1" title="READ ODOMETRY CLASS." alt="" coords="164,199,397,225"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,102,108,129"/>
-<area shape="rect" id="node3" href="$classvehicle__states.html" title="vehicle state class" alt="" coords="132,102,248,129"/>
-<area shape="rect" id="node4" href="$struct__read__pix___1_1read__odometryNode_1_1init__state.html" title="Private variable for initial vehicle state." alt="" coords="272,95,471,136"/>
-<area shape="rect" id="node5" href="$structflight__params.html" title="If you are adding more parameters to your flight in /src/acsl_flight/params/flight_params...." alt="" coords="495,102,605,129"/>
-<area shape="rect" id="node6" href="$structPiecewisePolynomialTrajectoryInfo.html" title="Struct containing the trajectory info coming from the .json file." alt="" coords="425,5,675,32"/>
-</map>

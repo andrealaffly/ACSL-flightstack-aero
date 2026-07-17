@@ -1,4 +1,0 @@
-<map id="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/flight_main/flight_main.hpp" name="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/flight_main/flight_main.hpp">
-<area shape="rect" id="node1" title="Header file for the main function that just sources all the other header files." alt="" coords="5,5,209,61"/>
-<area shape="rect" id="node2" href="$flight__main_8cpp.html" title="Main function to initiate ROS2." alt="" coords="17,109,197,165"/>
-</map>

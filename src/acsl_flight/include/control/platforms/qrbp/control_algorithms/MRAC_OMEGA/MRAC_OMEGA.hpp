@@ -54,7 +54,7 @@ ________/\\\__________/\\\\\\\\\______/\\\\\\\\\\\\\____/\\\\\\\\\\\\\___
 #include "control_algorithm_base.hpp"        // Include for the base class for the basis of control algorithms
 #include "MRAC_OMEGA_members.hpp"            // Include for all the members of the MRAC_OMEGA class
 #include "MRAC_OMEGA_logger.hpp"             // Include for the logging.
-#include "adaptive_laws.hpp"				 // Include for the adaptive laws.
+#include "adaptive_laws.hpp"				 				 // Include for the adaptive laws.
 
 #include "piecewise_polynomial_trajectory.hpp" // Include for the piecwise polynomial trajectory
 

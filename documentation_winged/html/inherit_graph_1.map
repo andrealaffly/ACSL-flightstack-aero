@@ -1,8 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class__control__algorithm__base___1_1controller__base.html" title="controller_base definition" alt="" coords="5,129,180,171"/>
-<area shape="rect" id="node2" href="$class__qrbp___1_1__mrac__omega___1_1mrac__omega.html" title=" " alt="" coords="228,5,393,47"/>
-<area shape="rect" id="node3" href="$class__qrbp___1_1__mrac__pid___1_1mrac__pid.html" title=" " alt="" coords="237,71,384,112"/>
-<area shape="rect" id="node4" href="$class__qrbp___1_1__pid___1_1pid.html" title="PID class." alt="" coords="243,137,378,163"/>
-<area shape="rect" id="node5" href="$class__qrbp___1_1__pid__omega___1_1pid__omega.html" title="public controller_base" alt="" coords="235,188,387,229"/>
-<area shape="rect" id="node6" href="$class__rostestdrone___1_1__pid___1_1pid.html" title="class pid : public controller_base, public blackbox" alt="" coords="234,253,387,295"/>
-</map>

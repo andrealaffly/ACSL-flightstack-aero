@@ -1,6 +1,0 @@
-<map id="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/control/platforms/qrbp/control_algorithms/PID/PID_logger.hpp" name="ACSL&#45;flightstack&#45;winged/src/acsl_flight/include/control/platforms/qrbp/control_algorithms/PID/PID_logger.hpp">
-<area shape="rect" id="node1" title="logging for the PID controller" alt="" coords="160,5,360,91"/>
-<area shape="rect" id="node2" href="$PID_8hpp.html" title="PID for the QRBP." alt="" coords="15,139,243,209"/>
-<area shape="rect" id="node4" href="$PID__logger_8cpp.html" title="logging for the PID controller." alt="" coords="268,139,516,209"/>
-<area shape="rect" id="node3" href="$PID_8cpp.html" title="PID for the QRBP Inherts the class controller_base for the basic functionality that is to be used for..." alt="" coords="5,257,253,328"/>
-</map>

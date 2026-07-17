@@ -1,4 +1,0 @@
-<map id="_user_defined_trajectory_base_::trajectory_base" name="_user_defined_trajectory_base_::trajectory_base">
-<area shape="rect" id="node1" title="base trajectory for pixhawk" alt="" coords="5,5,188,47"/>
-<area shape="rect" id="node2" href="$class__piecewise__polynomial__trajectory___1_1piecewise__polynomial__trajectory.html" title="Piecwise polynomial trajectory." alt="" coords="9,95,184,151"/>
-</map>

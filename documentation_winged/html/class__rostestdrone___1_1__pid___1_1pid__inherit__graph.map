@@ -1,4 +1,0 @@
-<map id="_rostestdrone_::_pid_::pid" name="_rostestdrone_::_pid_::pid">
-<area shape="rect" id="node1" title="class pid : public controller_base, public blackbox" alt="" coords="16,95,169,136"/>
-<area shape="rect" id="node2" href="$class__control__algorithm__base___1_1controller__base.html" title="controller_base definition" alt="" coords="5,5,180,47"/>
-</map>

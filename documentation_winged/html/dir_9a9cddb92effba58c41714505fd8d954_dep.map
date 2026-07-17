@@ -1,7 +1,0 @@
-<map id="ACSL&#45;flightstack&#45;winged/src/acsl_flight/src/control/platforms/rostestdrone/control_algorithms" name="ACSL&#45;flightstack&#45;winged/src/acsl_flight/src/control/platforms/rostestdrone/control_algorithms">
-<area shape="rect" id="node2" href="dir_cf88906da34f8065b891c00027ada1b3.html" title="PID" alt="" coords="37,63,109,111"/>
-<area shape="rect" id="node3" href="dir_b59d6e0e1db631c1aaa97e9d05ec23c1.html" title="include" alt="" coords="37,159,109,207"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000046_000004.html" title="2" alt="" coords="77,133,86,148"/>
-<area shape="rect" id="clust2" href="dir_9a9cddb92effba58c41714505fd8d954.html" alt="" coords="27,52,288,121"/>
-<area shape="rect" id="clust1" href="dir_6aa955054e6872401e8e24a6ccc1e3ee.html" title="rostestdrone" alt="" coords="16,16,299,132"/>
-</map>

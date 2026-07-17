@@ -1,5 +1,0 @@
-<map id="_control_algorithm_base_::controller_base" name="_control_algorithm_base_::controller_base">
-<area shape="rect" id="node1" title="controller_base definition" alt="" coords="43,184,217,225"/>
-<area shape="rect" id="node2" href="$structflight__params.html" title="If you are adding more parameters to your flight in /src/acsl_flight/params/flight_params...." alt="" coords="75,95,185,121"/>
-<area shape="rect" id="node3" href="$structPiecewisePolynomialTrajectoryInfo.html" title="Struct containing the trajectory info coming from the .json file." alt="" coords="5,5,255,32"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="flight_params" name="flight_params">
-<area shape="rect" id="node1" title="If you are adding more parameters to your flight in /src/acsl_flight/params/flight_params...." alt="" coords="75,95,185,121"/>
-<area shape="rect" id="node2" href="$structPiecewisePolynomialTrajectoryInfo.html" title="Struct containing the trajectory info coming from the .json file." alt="" coords="5,5,255,32"/>
-</map>

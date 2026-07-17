@@ -163,7 +163,7 @@ namespace _quadm_{
     // [1/4,  1/(4*l_y), -1/(4*l_x),  1/(4*c_t)]
     // [1/4,  1/(4*l_y),  1/(4*l_x), -1/(4*c_t)]
     // [1/4, -1/(4*l_y), -1/(4*l_x), -1/(4*c_t)]
-    const Eigen::Matrix4d mixer_matrix_qrbp = []() {
+    const Eigen::Matrix4d mixer_matrix_quadm = []() {
         Eigen::Matrix4d mat; // 4 rows, 4 columns
             
         // Assign values element-by-element

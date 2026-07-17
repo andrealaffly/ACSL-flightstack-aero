@@ -1,7 +1,0 @@
-<map id="_t265_::_vio_::VioT265Node" name="_t265_::_vio_::VioT265Node">
-<area shape="rect" id="node1" title="VioT265Node class which can recieve position tracking from the Realsense T265." alt="" coords="353,81,556,108"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,228,32"/>
-<area shape="rect" id="node3" href="$class__flight__log___1_1blackbox.html" title=" " alt="" coords="35,56,198,83"/>
-<area shape="rect" id="node4" href="$struct__t265___1_1vio__states.html" title="Struct for vio states that come over the USB 3.0 Link." alt="" coords="47,107,187,133"/>
-<area shape="rect" id="node5" href="$classvehicle__states.html" title="vehicle state class" alt="" coords="59,157,175,184"/>
-</map>

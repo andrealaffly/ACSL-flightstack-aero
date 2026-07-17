@@ -94,6 +94,7 @@ include_directories(${Boost_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/qrbp/control_algorithms/MRAC_OBSERVER/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/quadm/
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/quadm/control_algorithms/PID/
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/control/platforms/quadm/control_algorithms/MRAC_GEOMETRIC/
                   )
 
 # add source files
@@ -124,6 +125,8 @@ set(SOURCES
   src/control/platforms/qrbp/control_algorithms/MRAC_PID/MRAC_PID_logger.cpp
   src/control/platforms/quadm/control_algorithms/PID/PID_TD.cpp
   src/control/platforms/quadm/control_algorithms/PID/PID_TD_logger.cpp
+  src/control/platforms/quadm/control_algorithms/MRAC_GEOMETRIC/MRAC_GEOMETRIC_TD.cpp
+  src/control/platforms/quadm/control_algorithms/MRAC_GEOMETRIC/MRAC_GEOMETRIC_TD_logger.cpp
 )
 
 # add executable

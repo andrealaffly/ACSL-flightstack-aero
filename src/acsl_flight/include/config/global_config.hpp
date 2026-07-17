@@ -69,17 +69,18 @@ inline constexpr uint16_t WEATHER_PORT = 53000; // <-- Confirm this matches the 
 **********************************************************************************************************************
 */
 // Define named constants for controller types
-#define __PID__           1
-#define __MRAC_PID__      2
-#define __PID_OMEGA__     3
-#define __MRAC_OMEGA__    4
-#define __MRAC_OBSERVER__ 6
+#define __PID__            1
+#define __MRAC_PID__       2
+#define __PID_OMEGA__      3
+#define __MRAC_OMEGA__     4
+#define __MRAC_OBSERVER__  6
+#define __MRAC_GEOMETRIC__ 7
 
 // SELECT here the PLATFORM you are using ---------------------------------------------------------------------------
-#define SELECTED_PLATFORM __QRBP__
+#define SELECTED_PLATFORM __QUADM__
 
 // SELECT here the CONTROLLER you want to run -----------------------------------------------------------------------
-#define SELECTED_CONTROLLER __MRAC_OMEGA__
+#define SELECTED_CONTROLLER __MRAC_GEOMETRIC__
 
 /*********************************************************************************************************************
   HELPER BLOCK OF CODE - MODIFY ONLY IF THERE ARE CHANGES TO CONTROLLERS OR UDP NETWORKING
@@ -140,6 +141,12 @@ inline constexpr uint16_t WEATHER_PORT = 53000; // <-- Confirm this matches the 
         #include "PID_TD.hpp"
         // Remember the class name you used in control_algorithms
         using _picked_controller_ = _quadm_::_pid_::pid;    
+
+    #elif SELECTED_CONTROLLER == __MRAC_GEOMETRIC__
+
+        #include "MRAC_GEOMETRIC_TD.hpp"
+        // Remember the class name you used in control_algoritms
+        using _picked_controller_ = _quadm_::_mrac_geometric_::mrac_geometric;
 
     #else 
 
