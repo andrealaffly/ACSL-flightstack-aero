@@ -277,10 +277,10 @@ void pid::compute_normalized_thrusts()
     cim.Sat_Thrust = (cim.Thrust.cwiseMin(MAX_THRUST).cwiseMax(MIN_THRUST));
 
     // Compute the final control inputs
-    control_input(0) = (float) evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(0));
-    control_input(1) = (float) evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(1));
-    control_input(2) = (float) evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(2));
-    control_input(3) = (float) evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(3));
+    control_input(0) = (float) evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(0));
+    control_input(1) = (float) evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(1));
+    control_input(2) = (float) evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(2));
+    control_input(3) = (float) evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(3));
 }
 
 void pid::debug2terminal()

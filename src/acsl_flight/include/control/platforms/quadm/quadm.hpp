@@ -65,21 +65,21 @@ namespace _quadm_{
     inline constexpr double RAD2DEG = (180/PI);
 
     // Vehicle and Environment Defines
-    inline constexpr double MASS = 1.05748;                                  // mass of vehicle                      [Kg]                                      
-    inline constexpr double LX = 0.0954;                                     // dist to motor along x^J              [m]
-    inline constexpr double LY = 0.01107;                                    // dist to motor along y^J              [m]
+    inline constexpr double MASS = 1.28941154;  // mass of vehicle                      [Kg]                                      
+    inline constexpr double LX = 0.09667602;    // dist to motor along x^J              [m]
+    inline constexpr double LY = 0.11074982;    // dist to motor along y^J              [m]
 
     // Thrust Normalizeing polynomials are hardcoded!
     // Take care coding this from matlab. check the documentation for the polyval function.
     // The polynomails are reversed!.
-    inline constexpr double CT_MOTOR =  0.19972;                                   // motor torque coeff              [-]
-    inline constexpr double MAX_THRUST = 10;                                       // max allowed thrust per motor    [N]
+    inline constexpr double CT_MOTOR =  0.1017;                                    // motor torque coeff              [-]
+    inline constexpr double MAX_THRUST = 18;                                       // max allowed thrust per motor    [N]
     inline constexpr double MIN_THRUST = 0.3;                                      // min allowed thrust per motor    [N]
 
     // Roll Rate Filter ------------------------------------------------------------------------------------------------
     // A matrix of the roll_ref filter
     const Eigen::Matrix2d A_filter_roll_ref = (Eigen::Matrix2d() << 
-                                                    -54.0, -2025.0, 
+                                                    -72.0, -1600.0, 
                                                       1.0,    0.0 
                                                 ).finished(); 
 
@@ -87,7 +87,7 @@ namespace _quadm_{
     const Eigen::Vector2d B_filter_roll_ref = Eigen::Vector2d(1.0, 0); 
 
     // C matrix of the roll_ref filter
-    const Eigen::RowVector2d C_filter_roll_ref = Eigen::RowVector2d(2025.0, 0); 
+    const Eigen::RowVector2d C_filter_roll_ref = Eigen::RowVector2d(1600.0, 0); 
 
     // D matrix of the roll_ref filter
     const double D_filter_roll_ref = 0.0; 
@@ -95,7 +95,7 @@ namespace _quadm_{
     // Pitch Rate Filter -----------------------------------------------------------------------------------------------
     // A matrix of the pitch_ref filter
     const Eigen::Matrix2d A_filter_pitch_ref = (Eigen::Matrix2d() << 
-                                                    -54.0, -2025.0, 
+                                                    -72.0, -1600.0, 
                                                       1.0,    0.0
                                                 ).finished(); 
 
@@ -103,25 +103,41 @@ namespace _quadm_{
     const Eigen::Vector2d B_filter_pitch_ref = Eigen::Vector2d(1.0, 0); 
 
     // C matrix of the pitch_ref filter
-    const Eigen::RowVector2d C_filter_pitch_ref = Eigen::RowVector2d(2025.0, 0); 
+    const Eigen::RowVector2d C_filter_pitch_ref = Eigen::RowVector2d(1600.0, 0); 
 
     // D matrix of the pitch_ref filter
     const double D_filter_pitch_ref = 0.0; 
+    
+    // Yaw Rate Filter -------------------------------------------------------------------------------------------------
+    // A matrix of the yaw_ref filter
+    const Eigen::Matrix2d A_filter_yaw_ref = (Eigen::Matrix2d() << 
+                                                    -72.0, -1600.0, 
+                                                      1.0,    0.0
+                                                ).finished(); 
+
+    // B matrix of the yaw_ref filter
+    const Eigen::Vector2d B_filter_yaw_ref = Eigen::Vector2d(1.0, 0); 
+
+    // C matrix of the yaw_ref filter
+    const Eigen::RowVector2d C_filter_yaw_ref = Eigen::RowVector2d(1600.0, 0); 
+
+    // D matrix of the yaw_ref filter
+    const double D_filter_yaw_ref = 0.0; 
 
     // Roll Acceleration Filter ----------------------------------------------------------------------------------------
-    // A matrix of the roll_ref filter
+    // A matrix of the roll_dot_ref filter
     const Eigen::Matrix2d A_filter_roll_dot_ref = (Eigen::Matrix2d() << 
                                                     -50.0, -2500.0, 
                                                       1.0,    0.0 
                                                 ).finished(); 
 
-    // B matrix of the roll_ref filter
+    // B matrix of the roll_dot_ref filter
     const Eigen::Vector2d B_filter_roll_dot_ref = Eigen::Vector2d(1.0, 0); 
 
-    // C matrix of the roll_ref filter
-    const Eigen::RowVector2d C_filter_roll_dot_ref = Eigen::RowVector2d(0.2*2500.0, 0); 
+    // C matrix of the roll_dot_ref filter
+    const Eigen::RowVector2d C_filter_roll_dot_ref = Eigen::RowVector2d(0.15*2500.0, 0); 
 
-    // D matrix of the roll_ref filter
+    // D matrix of the roll_dot_ref filter
     const double D_filter_roll_dot_ref = 0.0; 
 
     // Pitch Acceleration Filter ---------------------------------------------------------------------------------------
@@ -135,29 +151,46 @@ namespace _quadm_{
     const Eigen::Vector2d B_filter_pitch_dot_ref = Eigen::Vector2d(1.0, 0); 
 
     // C matrix of the pitch_ref filter
-    const Eigen::RowVector2d C_filter_pitch_dot_ref = Eigen::RowVector2d(0.2*2500.0, 0); 
+    const Eigen::RowVector2d C_filter_pitch_dot_ref = Eigen::RowVector2d(0.15*2500.0, 0); 
 
     // D matrix of the pitch_ref filter
     const double D_filter_pitch_dot_ref = 0.0; 
+
+    // Yaw Acceleration Filter -----------------------------------------------------------------------------------------
+    // A matrix of the yaw_ref filter
+    const Eigen::Matrix2d A_filter_yaw_dot_ref = (Eigen::Matrix2d() << 
+                                                    -50.0, -2500.0, 
+                                                      1.0,    0.0
+                                                ).finished(); 
+
+    // B matrix of the yaw_ref filter
+    const Eigen::Vector2d B_filter_yaw_dot_ref = Eigen::Vector2d(1.0, 0); 
+
+    // C matrix of the yaw_ref filter
+    const Eigen::RowVector2d C_filter_yaw_dot_ref = Eigen::RowVector2d(0.15*2500.0, 0); 
+
+    // D matrix of the yaw_ref filter
+    const double D_filter_yaw_dot_ref = 0.0; 
     
+    // Thrust Polynomial -----------------------------------------------------------------------------------------------
     // Polynomial coefficients vector to evaluate the Commanded Thrust [-] based on the Thrust in Newton
     // TMotor F35A - Velox V2808 Kv1300
-    const Eigen::VectorXd thrust_polynomial_coeff_qrbp = (Eigen::VectorXd(8) << 
-                                                           1.1397548468561201E-5,
-                                                          -0.00038436172518955446,
-                                                           0.0051947365478567029,
-                                                          -0.036003519831726248,
-                                                           0.13652913911293302,
-                                                          -0.2857385586886379,
-                                                           0.40625173135017634,
-                                                          -0.0586576952028257
+    const Eigen::VectorXd thrust_polynomial_coeff_quadm = (Eigen::VectorXd(8) << 
+                                                            0.000000030316084940690649384320061064321,
+                                                           -0.000001814468657920738862350290739045,
+                                                            0.000042434512948142268497307011410058,
+                                                           -0.00050487431926448940282259325584846,
+                                                            0.0035249290604740459061094970394379,
+                                                           -0.017552333963129614080589391278409,
+                                                            0.1149654034760465154407782506496,
+                                                            0.011001286689392602777259888569006
                                                         ).finished();
 
     // Weight vector of the qrbp
     static inline const Eigen::Vector3d e3_basis = Eigen::Vector3d(0.0, 0.0, 1.0);
 
-    
-    // Mixer Matrix - This captures the necessary constants within the lambda function and initializes the
+    // Mixer Matrix ----------------------------------------------------------------------------------------------------
+    // This captures the necessary constants within the lambda function and initializes the
     // mixer_matrix_quadcopter with the resulting matrix.
     // [1/4, -1/(4*l_y),  1/(4*l_x),  1/(4*c_t)]
     // [1/4,  1/(4*l_y), -1/(4*l_x),  1/(4*c_t)]
@@ -192,13 +225,13 @@ namespace _quadm_{
 
 
 
-    // Matrix of inertia of the quadcopter frame
+    // Matrix of inertia of the quadcopter frame -----------------------------------------------------------------------
     // [kg*m^2] inertia matrix of the vehicle system (drone frame + box + propellers) expressed in
     // Pixhawk coordinate system (FRD - x-Front, y-Right, z-Down), computed at the vehicle center of mass
     const Eigen::Matrix3d inertia_matrix_q = (Eigen::Matrix3d() << 
-                                                0.00373978,	0.00000409, 0.00001103,
-                                                0.00000409,	0.00422375,	0.00000086,
-                                                0.00001103,	0.00000086,	0.00635708).finished();                                             
+                                                0.00677586,	0.00000121, 0.00000914,
+                                                0.00000121,	0.00639639,	0.00000215,
+                                                0.00000914,	0.00000215,	0.01061757).finished();                                             
 
 } // namespace _quadm_
 

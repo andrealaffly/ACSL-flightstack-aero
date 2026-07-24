@@ -261,8 +261,7 @@ void mrac_geometric::update(double time,
   cim.r_ddot_user = ud.getUserDefinedAcceleration();  
   cim.psi_user = ud.getUserDefinedYaw();
   cim.psi_user_unwrapped = unwrapPsiSimple(cim.psi_user, this->psiState);
-  // cim.psi_dot_user = ud.getUserDefinedYawRate();
-  cim.psi_dot_user = 0.0;
+  cim.psi_dot_user = ud.getUserDefinedYawRate();
 
   // 3. Capture the time before the execution of the controller ------------------
   cim.alg_start_time = std::chrono::high_resolution_clock::now();
@@ -532,10 +531,12 @@ void mrac_geometric::compute_u1_R_d()
                                         + cip.B_filter_omega_d * cim.omega_d(2);
 
   // Compute the desired angular acceleration
-  cim.alpha_d(0) = cip.C_filter_omega_d * csm.state_omega_x_d_filter;
-  cim.alpha_d(1) = cip.C_filter_omega_d * csm.state_omega_y_d_filter;
-  cim.alpha_d(2) = cip.C_filter_omega_d * csm.state_omega_z_d_filter;
+  Eigen::Matrix<double, 3, 1> omega_dot_d_J;
+  omega_dot_d_J(0) = cip.C_filter_omega_d * csm.state_omega_x_d_filter;
+  omega_dot_d_J(1) = cip.C_filter_omega_d * csm.state_omega_y_d_filter;
+  omega_dot_d_J(2) = cip.C_filter_omega_d * csm.state_omega_z_d_filter;
 
+  cim.alpha_d = omega_dot_d_J + cim.omega.cross(cim.omega_d);
 }
 
 // Compute the rotational control
@@ -669,10 +670,10 @@ void mrac_geometric::compute_normalized_thrusts()
 	cim.Sat_Thrust = (cim.Thrust.cwiseMin(MAX_THRUST).cwiseMax(MIN_THRUST));
 
 	// Compute the final control inputs
-	control_input(0) = evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(0));
-	control_input(1) = evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(1));
-	control_input(2) = evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(2));
-	control_input(3) = evaluatePolynomial(thrust_polynomial_coeff_qrbp, cim.Sat_Thrust(3));
+	control_input(0) = evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(0));
+	control_input(1) = evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(1));
+	control_input(2) = evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(2));
+	control_input(3) = evaluatePolynomial(thrust_polynomial_coeff_quadm, cim.Sat_Thrust(3));
 }
 
 // Function that is called in control.cpp
